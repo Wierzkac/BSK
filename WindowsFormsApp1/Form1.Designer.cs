@@ -2,15 +2,8 @@
 {
     partial class Form1
     {
-        /// <summary>
-        /// Wymagana zmienna projektanta.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
-
-        /// <summary>
-        /// Wyczyść wszystkie używane zasoby.
-        /// </summary>
-        /// <param name="disposing">prawda, jeżeli zarządzane zasoby powinny zostać zlikwidowane; Fałsz w przeciwnym wypadku.</param>
+        
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -35,12 +28,15 @@
             this.startButton = new System.Windows.Forms.Button();
             this.fileSystemWatcher1 = new System.IO.FileSystemWatcher();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // WybierzPlik
             // 
             this.WybierzPlik.Location = new System.Drawing.Point(52, 44);
             this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2);
+            this.WybierzPlik.Location = new System.Drawing.Point(95, 12);
             this.WybierzPlik.Name = "WybierzPlik";
             this.WybierzPlik.Size = new System.Drawing.Size(98, 39);
             this.WybierzPlik.TabIndex = 0;
@@ -54,6 +50,9 @@
             this.ZapiszJako.Margin = new System.Windows.Forms.Padding(2);
             this.ZapiszJako.Name = "ZapiszJako";
             this.ZapiszJako.Size = new System.Drawing.Size(107, 29);
+            this.ZapiszJako.Location = new System.Drawing.Point(95, 402);
+            this.ZapiszJako.Name = "ZapiszJako";
+            this.ZapiszJako.Size = new System.Drawing.Size(130, 36);
             this.ZapiszJako.TabIndex = 1;
             this.ZapiszJako.Text = "Zapisz plik jako...";
             this.ZapiszJako.UseVisualStyleBackColor = true;
@@ -96,6 +95,23 @@
             this.fileSystemWatcher1.EnableRaisingEvents = true;
             this.fileSystemWatcher1.SynchronizingObject = this;
             this.fileSystemWatcher1.Changed += new System.IO.FileSystemEventHandler(this.fileSystemWatcher1_Changed);
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 81);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(101, 17);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Wczytałeś plik:";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Enabled = false;
+            this.textBox1.Location = new System.Drawing.Point(12, 110);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(307, 22);
+            this.textBox1.TabIndex = 3;
             // 
             // Form1
             // 
@@ -105,6 +121,9 @@
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.encodingModeComboBox);
+            this.ClientSize = new System.Drawing.Size(331, 450);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.ZapiszJako);
             this.Controls.Add(this.WybierzPlik);
             this.Margin = new System.Windows.Forms.Padding(2);
@@ -112,6 +131,8 @@
             this.Text = "SuperEncrypter";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
+            this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -125,6 +146,8 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button startButton;
         private System.IO.FileSystemWatcher fileSystemWatcher1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 
