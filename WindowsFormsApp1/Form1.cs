@@ -14,11 +14,24 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         private OpenFileDialog openFileDialog1;
-        private byte[] fileData = null;
+        //private byte[] fileData = null;
+
+        public byte[] fileData
+        {
+            get { return fileData; }
+        } 
 
         public Form1()
         {
+            
             InitializeComponent();
+            
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            encodingModeComboBox.SelectedItem = null;
+            encodingModeComboBox.SelectedItem = "ECB";
         }
 
         private void WybierzPlik_Click(object sender, EventArgs e)
@@ -57,6 +70,28 @@ namespace WindowsFormsApp1
         private void ZapiszJako_Click(object sender, EventArgs e)
         {
             ByteArrayToFile(fileData);
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            Form2 progressForm = new Form2(this);
+            this.Hide();
+            progressForm.ShowDialog();
+
+        }
+
+
+        public object ChoosenEncodingMode()
+        {
+            return encodingModeComboBox.SelectedItem;
+        }
+
+
+
+        private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
+        { 
+
+           
         }
     }
 }
