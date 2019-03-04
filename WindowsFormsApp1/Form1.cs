@@ -12,7 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using static AsynchronousSocketListener;
+
 
 namespace WindowsFormsApp1
 {
@@ -33,12 +33,7 @@ namespace WindowsFormsApp1
             encodingModeComboBox.SelectedItem = null;
             encodingModeComboBox.SelectedItem = "ECB";
 
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-
-                StartListening();
-            }).Start();
+      
         }
 
         private void WybierzPlik_Click(object sender, EventArgs e)
