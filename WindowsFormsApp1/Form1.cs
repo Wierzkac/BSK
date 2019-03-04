@@ -19,13 +19,8 @@ namespace WindowsFormsApp1
     public partial class Form1 : Form
     {
         private OpenFileDialog openFileDialog1;
-        private byte[] fileData = null;
-
-        public byte[] fileData
-        {
-            get { return fileData; }
-        } 
-
+        public byte[] fileData = null;
+        
         public Form1()
         {
             
@@ -37,6 +32,7 @@ namespace WindowsFormsApp1
         {
             encodingModeComboBox.SelectedItem = null;
             encodingModeComboBox.SelectedItem = "ECB";
+
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
@@ -60,21 +56,25 @@ namespace WindowsFormsApp1
                 }
                 else {
                     var filePath = openFileDialog1.FileName;
-                    FileToByteArray(openFileDialog1.FileName);
+                    fileData = FileToByteArray(openFileDialog1.FileName);
                     textBox1.Text = openFileDialog1.SafeFileName;
                 }
             }
         }
-        private void FileToByteArray(string fileName)
+
+        private byte[] FileToByteArray(string fileName)
         {
+            byte[] array;
             using (FileStream fs = File.OpenRead(fileName))
             {
                 using (BinaryReader binaryReader = new BinaryReader(fs))
                 {
-                    fileData = binaryReader.ReadBytes((int)fs.Length);
+                    array = binaryReader.ReadBytes((int)fs.Length);
                 }
             }
+            return array;
         }
+
         private void ByteArrayToFile(byte[] array)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -111,10 +111,6 @@ namespace WindowsFormsApp1
         {
         }
            
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         private void label1_Click(object sender, EventArgs e)
         {

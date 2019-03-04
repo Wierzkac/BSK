@@ -155,10 +155,4 @@ public class AsynchronousSocketListener
             Console.WriteLine(e.ToString());
         }
     }
-
-    public static int Main(String[] args)
-    {
-        StartListening();
-        return 0;
-    }
 }
