@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Threading;
+
 
 namespace WindowsFormsApp1
 {
@@ -30,6 +32,22 @@ namespace WindowsFormsApp1
             encryptionModeLabel.Text = mainForm.ChoosenEncodingMode().ToString();
 
             progressBarsDefaultSettings();
+
+
+
+            Thread encoding = new Thread(startEncoding);
+            encoding.Start();
+
+
+
+        }
+
+        private void startEncoding()
+        {
+            Encoder enc = new Encoder(this);
+
+
+            enc.EncryptByECB(mainForm.fileData);
         }
 
         private void progressBarsDefaultSettings()
@@ -45,6 +63,5 @@ namespace WindowsFormsApp1
             SendingProgressBar.Step = 1;
         }
 
-      
     }
 }
