@@ -26,7 +26,7 @@ namespace WindowsFormsApp1
         }
         private void Form2_Load(object sender, EventArgs e)
         {
-            fileNameLabel.Text = "WybranyPlik";
+            fileNameLabel.Text = mainForm.openfileDialog1.SafeFileName;
             encryptionModeLabel.Text = mainForm.ChoosenEncodingMode().ToString();
 
             progressBarsDefaultSettings();
