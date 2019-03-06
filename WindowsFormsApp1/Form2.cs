@@ -44,10 +44,31 @@ namespace WindowsFormsApp1
 
         private void startEncoding()
         {
-            Encoder enc = new Encoder(this);
+            Encoder enc = new Encoder();
 
 
-            enc.EncryptByECB(mainForm.fileData);
+            byte[] encrypted = enc.EncryptByECB(mainForm.fileData);
+            byte[] decrypted = enc.DecryptByECB(encrypted);
+
+
+            //encrypted = enc.EncryptByCBC(decrypted);
+            //decrypted = enc.DecryptByCBC(encrypted);
+
+            //encrypted = enc.EncryptByCFB(decrypted);
+            //decrypted = enc.DecryptByCFB(encrypted);
+
+            encrypted = enc.EncryptByOFB(decrypted);
+            decrypted = enc.DecryptByOFB(encrypted);
+
+            for (int i = 0; i < mainForm.fileData.Length; i++)
+            {
+                if(decrypted[i] != mainForm.fileData[i])
+                {
+                    ;
+                }
+            }
+
+            ;
         }
 
         private void progressBarsDefaultSettings()

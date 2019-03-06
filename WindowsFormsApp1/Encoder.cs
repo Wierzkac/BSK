@@ -14,14 +14,7 @@ namespace WindowsFormsApp1
         private byte[] _Key;
         private byte[] _IV;
         private int _KeySize;
-        private Form2 _form2;
-
-        public Form2 Form2
-        {
-            get { return _form2; }
-            set { _form2 = value; }
-        }
-
+      
         public int KeySize
         {
             get { return _KeySize; }
@@ -40,117 +33,173 @@ namespace WindowsFormsApp1
             set { _IV = value; }
         }
 
-        public Encoder(Form2 form)
+        public Encoder()
         {
-            Key = AesManaged.Create().Key;
-            IV = AesManaged.Create().IV;
+            Key = Aes.Create().Key;
+            IV = Aes.Create().IV;
             KeySize = Key.Length * 8;
-            Form2 = form;
+           
+        }
+
+        public Encoder(byte[] Key, byte[] IV)
+        {
+            this.Key = Key;
+            this.IV = IV;
+            KeySize = Key.Length * 8;
         }
 
 
-        public void EncryptByECB(byte[] message)
+        public byte[] EncryptByECB(byte[] message)
         {
 
-            CheckData(message);   
-
-            AesManaged aes = new AesManaged
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
             {
+                BlockSize = 128,
+                KeySize = this.KeySize,
                 Key = this.Key,
                 IV = this.IV,
-                KeySize = this.KeySize,
-                BlockSize = 128,
-                Mode = CipherMode.ECB,
-                Padding = PaddingMode.Zeros
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.ECB
             };
 
-            byte[] block = new byte[16];
-            byte[] encryptedMessage = new byte[message.Length + (16 - message.Length % 16)];
-
-            for (int j = 0; j < message.Length; j += 16)
-            {
-                for (int i = 0; i < 16 && i + j < message.Length; i++)
-                {
-                    //this.Form2.EncodingProgressBar.PerformStep();
-                    block[i] = message[i + j];
-                }
-               byte[] encryptedBlock = EncryptBlockOfData(block, aes);
-
-                //wysyłanie bloku <--------------------------------------------------------------------------WYSYŁANIE BLOKU DANYCH---------------------------------------------------------------
-
-
-                /* Dane Do przesłania
-                1. Nazwa pliku
-                2. Rozmiar orginalnego pliku
-                3. Rozmiar zaszyfrowanego pliku
-
-                */
-
-                for (int i = 0; i < 16; i++)
-                {
-                    
-
-
-                    encryptedMessage[i + j] = encryptedBlock[i];
-                    block[i] = 0;
-                }
-                
-            }
-
-
-            byte lastByte = encryptedMessage[encryptedMessage.Length - 1];
-
-        }
-
-        public void encryptByCBC()
-        {
-
-        }
-
-        public void encryptByCFB()
-        {
-
-        }
-
-        public void encryptByOFB()
-        {
-
-        }
-
-
-        private void CheckData(byte[] data)
-        {
-
-            // checking if data were created succesfully
-            if (data == null || data.Length <= 0)
-                throw new ArgumentNullException("Data");
-            if (Key == null || Key.Length <= 0)
-                throw new ArgumentNullException("Key");
-            if (IV == null || IV.Length <= 0)
-                throw new ArgumentNullException("IV");
-          
-        }
-
-        private byte[] EncryptBlockOfData(byte[] data, AesManaged aes)
-        {
-            byte[] encrypted;
-
-            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-            using (MemoryStream msEncrypt = new MemoryStream())
-            {
-                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
-                {
-                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                    {
-                        swEncrypt.Write(data);
-                    }
-                    encrypted = msEncrypt.ToArray();
-                }
-            }
+            ICryptoTransform encryptor = aes.CreateEncryptor();
+            byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
+            encryptor.Dispose();
 
             return encrypted;
         }
 
+        public byte[] EncryptByCBC(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.CBC
+            };
+
+            ICryptoTransform encryptor = aes.CreateEncryptor();
+            byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
+            encryptor.Dispose();
+
+            return encrypted;
+        }
+       
+        public byte[] EncryptByCFB(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.CFB
+            };
+
+            ICryptoTransform encryptor = aes.CreateEncryptor();
+            byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
+            encryptor.Dispose();
+
+            return encrypted;
+        }
+
+        public byte[] EncryptByOFB(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.OFB
+            };
+
+            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+            byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
+            encryptor.Dispose();
+
+            return encrypted;
+        }
+
+        public byte[] DecryptByECB(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.ECB
+            };
+
+            ICryptoTransform decryptor = aes.CreateDecryptor();
+            byte[] decrypted = decryptor.TransformFinalBlock(message, 0, message.Length);
+            decryptor.Dispose();
+
+            return decrypted;
+        }
+
+        public byte[] DecryptByCBC(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.CBC
+            };
+
+            ICryptoTransform decryptor = aes.CreateDecryptor();
+            byte[] decrypted = decryptor.TransformFinalBlock(message, 0, message.Length);
+            decryptor.Dispose();
+
+            return decrypted;
+        }
+
+        public byte[] DecryptByCFB(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.CFB
+            };
+
+            ICryptoTransform decryptor = aes.CreateDecryptor();
+            byte[] decrypted = decryptor.TransformFinalBlock(message, 0, message.Length);
+            decryptor.Dispose();
+
+            return decrypted;
+        }
+
+        public byte[] DecryptByOFB(byte[] message)
+        {
+            AesCryptoServiceProvider aes = new AesCryptoServiceProvider
+            {
+                BlockSize = 128,
+                KeySize = this.KeySize,
+                Key = this.Key,
+                IV = this.IV,
+                Padding = PaddingMode.Zeros,
+                Mode = CipherMode.OFB
+            };
+
+            ICryptoTransform decryptor = aes.CreateDecryptor();
+            byte[] decrypted = decryptor.TransformFinalBlock(message, 0, message.Length);
+            decryptor.Dispose();
+
+            return decrypted;
+        }
     }
 }
