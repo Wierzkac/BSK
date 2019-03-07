@@ -14,6 +14,8 @@ namespace WindowsFormsApp1
 {
     public partial class Form2 : Form
     {
+
+
         private Form1 mainForm = null;
         public Form2()
         {
@@ -33,42 +35,65 @@ namespace WindowsFormsApp1
 
             progressBarsDefaultSettings();
 
-
-
-            Thread encoding = new Thread(startEncoding);
+            Thread encoding = new Thread(EncryptMessage);
             encoding.Start();
-
-
 
         }
 
-        private void startEncoding()
+        private void EncryptMessage()
         {
             Encoder enc = new Encoder();
+            byte[] encrypted = null;
 
-
-            byte[] encrypted = enc.EncryptByECB(mainForm.fileData);
-            byte[] decrypted = enc.DecryptByECB(encrypted);
-
-
-            //encrypted = enc.EncryptByCBC(decrypted);
-            //decrypted = enc.DecryptByCBC(encrypted);
-
-            //encrypted = enc.EncryptByCFB(decrypted);
-            //decrypted = enc.DecryptByCFB(encrypted);
-
-            //encrypted = enc.EncryptByOFB(decrypted);
-            //decrypted = enc.DecryptByOFB(encrypted);
-
-            for (int i = 0; i < mainForm.fileData.Length; i++)
+            string choosenMode = null;
+            mainForm.Invoke(new Action(() =>
             {
-                if(decrypted[i] != mainForm.fileData[i])
-                {
-                    ;
-                }
+                choosenMode = mainForm.ChoosenEncodingMode().ToString();
+            }));
+
+
+            switch(choosenMode)
+            {
+                case "ECB":
+                    encrypted = enc.EncryptByECB(mainForm.fileData);
+                    Console.WriteLine("ECB");
+                    break;
+
+                case "CBC":
+                    encrypted = enc.EncryptByCBC(mainForm.fileData);
+                    Console.WriteLine("CBC");
+                    break;
+
+                case "CFB":
+                    encrypted = enc.EncryptByCFB(mainForm.fileData);
+                    Console.WriteLine("CFB");
+                    break;
+
+                case "OFB":
+                    //encrypted = enc.EncryptByOFB(mainForm.fileData);
+                    MessageBox.Show("Ten tryb szyfrowania nie został jeszcze zaimplementowany!\n\nWybierz inny tryb!", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
+                    break;
+
+                default:
+                    MessageBox.Show("Błąd wyboru trybu szyfrowania!\n Wybierz tryb jeszcze raz", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
+                    break;
             }
 
-            ;
+            if (encrypted == null) return;
+
+            /* *************************************************************************************************************************************************************************
+             * Pod encrypted jest zaszyfrowana wiadomość
+             * Klucz sesyjny (chyba) pod enc.Key;                                                                                       TU PROPONUJĘ WYSYŁANIE
+             * Wektor inicjujący pod enc.IV;
+             * *************************************************************************************************************************************************************************
+             */
+
+
+            mainForm.Invoke(new Action(() =>
+            {
+                mainForm.fileData = enc.DecryptByECB(encrypted);
+            }));
+
         }
 
         private void progressBarsDefaultSettings()

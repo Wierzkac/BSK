@@ -97,9 +97,17 @@ namespace WindowsFormsApp1
         
         private void startButton_Click(object sender, EventArgs e)
         {
-            Form2 progressForm = new Form2(this);
-            this.Hide();
-            progressForm.ShowDialog();
+
+
+            if (textBox1.Text != "") {
+                Form2 progressForm = new Form2(this);
+                //this.Hide();
+                progressForm.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Nie wybrano pliku!", "Błędny plik", MessageBoxButtons.OK);
+            }
 
         }
 
