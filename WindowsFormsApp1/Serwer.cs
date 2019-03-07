@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Windows.Forms;
+using WindowsFormsApp1;
 
 // State object for reading client data asynchronously  
 public class StateObject
@@ -20,14 +22,21 @@ public class StateObject
 public class AsynchronousSocketListener
 {
     // Thread signal.  
-    public static ManualResetEvent allDone = new ManualResetEvent(false);
+    public static ManualResetEvent allDone = 
+        new ManualResetEvent(false);
+    private static ManualResetEvent sendDone =
+        new ManualResetEvent(false);
+    private static ManualResetEvent receiveDone =
+        new ManualResetEvent(false);
+    private static Form1 app;
 
     public AsynchronousSocketListener()
     {
     }
 
-    public static void StartListening()
+    public static void StartListening(Form1 ar)
     {
+        app = ar;
         // Establish the local endpoint for the socket.  
         // The DNS name of the computer  
         // running the listener is "host.contoso.com".  
@@ -74,6 +83,12 @@ public class AsynchronousSocketListener
     {
         // Signal the main thread to continue.  
         allDone.Set();
+        app.Invoke(new Action(() =>
+        {
+            app.label4.Text = "Nawiązano połączenie z klientem";
+            app.label4.ForeColor = System.Drawing.Color.Green;
+        }));
+
 
         // Get the socket that handles the client request.  
         Socket listener = (Socket)ar.AsyncState;
@@ -125,7 +140,7 @@ public class AsynchronousSocketListener
         }
     }
 
-    private static void Send(Socket handler, String data)
+    public static void Send(Socket handler, String data)
     {
         // Convert the string data to byte data using ASCII encoding.  
         byte[] byteData = Encoding.ASCII.GetBytes(data);

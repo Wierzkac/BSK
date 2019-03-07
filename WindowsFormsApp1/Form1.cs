@@ -23,9 +23,7 @@ namespace WindowsFormsApp1
         
         public Form1()
         {
-            
             InitializeComponent();
-            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -37,7 +35,7 @@ namespace WindowsFormsApp1
             {
                 Thread.CurrentThread.IsBackground = true;
 
-                StartListening();
+                StartListening(this);
             }).Start();
         }
 
@@ -103,18 +101,6 @@ namespace WindowsFormsApp1
         public object ChoosenEncodingMode()
         {
             return encodingModeComboBox.SelectedItem;
-        }
-
-
-
-        private void fileSystemWatcher1_Changed(object sender, FileSystemEventArgs e)
-        {
-        }
-           
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
