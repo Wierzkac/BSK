@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Text;
+using WindowsFormsApp1;
 
 //// State object for receiving data from remote device.  
 //public class StateObject
@@ -29,50 +30,59 @@ public class AsynchronousClient
         new ManualResetEvent(false);
     private static ManualResetEvent receiveDone =
         new ManualResetEvent(false);
+    private static Form4 app;
 
     // The response from the remote device.  
     private static String response = String.Empty;
 
-    private static void StartClient()
+    public static void StartClient(Form4 ar)
     {
+        app = ar;
+        // Establish the remote endpoint for the socket.  
+        // The name of the   
+        // remote device is "host.contoso.com".  
+        IPAddress ipAddress = IPAddress.Parse("192.168.56.1");
+        IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+
+        // Create a TCP/IP socket.  
+        Socket client = new Socket(ipAddress.AddressFamily,
+            SocketType.Stream, ProtocolType.Tcp);
+
         // Connect to a remote device.  
         try
         {
-            // Establish the remote endpoint for the socket.  
-            // The name of the   
-            // remote device is "host.contoso.com".  
-            IPAddress ipAddress = IPAddress.Parse("192.168.56.1");
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
 
-            // Create a TCP/IP socket.  
-            Socket client = new Socket(ipAddress.AddressFamily,
-                SocketType.Stream, ProtocolType.Tcp);
-
-            // Connect to the remote endpoint.  
             client.BeginConnect(remoteEP,
-                new AsyncCallback(ConnectCallback), client);
+                    new AsyncCallback(ConnectCallback), client);
             connectDone.WaitOne();
 
-            // Send test data to the remote device.  
-            Send(client, "This is a test<EOF>");
-            sendDone.WaitOne();
 
-            // Receive the response from the remote device.  
-            Receive(client);
-            receiveDone.WaitOne();
+            //// Send test data to the remote device.  
+            //Send(client, "This is a test<EOF>");
+            //sendDone.WaitOne();
 
-            // Write the response to the console.  
-            Console.WriteLine("Response received : {0}", response);
+            //// Receive the response from the remote device.  
+            //Receive(client);
+            //receiveDone.WaitOne();
 
-            // Release the socket.  
-            client.Shutdown(SocketShutdown.Both);
-            client.Close();
+            //// Write the response to the console.  
+            //Console.WriteLine("Response received : {0}", response);
+
+            //// Release the socket.  
+            //client.Shutdown(SocketShutdown.Both);
+            //client.Close();
 
         }
         catch (Exception e)
         {
             Console.WriteLine(e.ToString());
         }
+    }
+
+    public static void EndConnection(Socket client)
+    {
+        client.Shutdown(SocketShutdown.Both);
+        client.Close();
     }
 
     private static void ConnectCallback(IAsyncResult ar)
@@ -84,6 +94,12 @@ public class AsynchronousClient
 
             // Complete the connection.  
             client.EndConnect(ar);
+
+            app.Invoke(new Action(() =>
+            {
+                app.label4.Text = "Nawiązano połączenie z serwerem";
+                app.label4.ForeColor = System.Drawing.Color.Green;
+            }));
 
             Console.WriteLine("Socket connected to {0}",
                 client.RemoteEndPoint.ToString());
