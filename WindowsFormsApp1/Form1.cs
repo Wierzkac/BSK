@@ -12,7 +12,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using static AsynchronousSocketListener;
+
 
 namespace WindowsFormsApp1
 {
@@ -20,17 +20,22 @@ namespace WindowsFormsApp1
     {
         private OpenFileDialog openFileDialog1;
         public byte[] fileData = null;
+
+        public OpenFileDialog openfileDialog1
+        {
+            get { return openFileDialog1; }
+        }
         
         public Form1()
-        {
-            InitializeComponent();
+        {           
+            InitializeComponent();     
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             encodingModeComboBox.SelectedItem = null;
             encodingModeComboBox.SelectedItem = "ECB";
-
+            
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;

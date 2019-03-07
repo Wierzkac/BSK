@@ -137,5 +137,13 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ProgressBar encodingProgressBar;
         private System.Windows.Forms.ProgressBar SendingProgressBar;
+
+
+        public System.Windows.Forms.ProgressBar EncodingProgressBar
+        {
+            get { return encodingProgressBar; }
+        }
+
+
     }
 }
