@@ -57,8 +57,8 @@ namespace WindowsFormsApp1
             //encrypted = enc.EncryptByCFB(decrypted);
             //decrypted = enc.DecryptByCFB(encrypted);
 
-            encrypted = enc.EncryptByOFB(decrypted);
-            decrypted = enc.DecryptByOFB(encrypted);
+            //encrypted = enc.EncryptByOFB(decrypted);
+            //decrypted = enc.DecryptByOFB(encrypted);
 
             for (int i = 0; i < mainForm.fileData.Length; i++)
             {
