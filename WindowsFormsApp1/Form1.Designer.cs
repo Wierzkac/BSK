@@ -41,7 +41,7 @@ namespace WindowsFormsApp1
             // WybierzPlik
             // 
             this.WybierzPlik.Location = new System.Drawing.Point(39, 20);
-            this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2);
             this.WybierzPlik.Name = "WybierzPlik";
             this.WybierzPlik.Size = new System.Drawing.Size(98, 39);
             this.WybierzPlik.TabIndex = 0;
@@ -52,7 +52,7 @@ namespace WindowsFormsApp1
             // ZapiszJako
             // 
             this.ZapiszJako.Location = new System.Drawing.Point(95, 402);
-            this.ZapiszJako.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ZapiszJako.Margin = new System.Windows.Forms.Padding(2);
             this.ZapiszJako.Name = "ZapiszJako";
             this.ZapiszJako.Size = new System.Drawing.Size(130, 36);
             this.ZapiszJako.TabIndex = 1;
@@ -153,9 +153,9 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ZapiszJako);
             this.Controls.Add(this.WybierzPlik);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
-            this.Text = "SuperEncoder";
+            this.Text = "SuperEncrypter";
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).EndInit();
             this.ResumeLayout(false);
