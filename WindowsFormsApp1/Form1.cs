@@ -98,7 +98,6 @@ namespace WindowsFormsApp1
         private void startButton_Click(object sender, EventArgs e)
         {
 
-
             if (textBox1.Text != "") {
                 Form2 progressForm = new Form2(this);
                 //this.Hide();
