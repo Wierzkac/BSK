@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-using static AsynchronousClient;
 using System.Security.Cryptography;
 using Microsoft.Win32;
 using System.IO;
+using System.Net.Sockets;
+using System.Net;
 
 namespace WindowsFormsApp1
 {
@@ -19,7 +20,8 @@ namespace WindowsFormsApp1
     public partial class Form4 : Form
     {
         private byte[] _receivedFile = null;
-
+        private TcpClient client;
+        private NetworkStream ns;
         public Form4()
         {
             InitializeComponent();
@@ -31,19 +33,46 @@ namespace WindowsFormsApp1
             {
                 Thread.CurrentThread.IsBackground = true;
 
-                StartClient(this);
+                client = new TcpClient("127.0.0.1", 11000);
+                ns = client.GetStream();
+                Invoke(new Action(() =>
+                {
+                    label4.Text = "Nawiązano połączenie z klientem";
+                    label4.ForeColor = Color.Green;
+                }));
+
             }).Start();
 
         }
-
+        public static void AppendToFile(string fileToWrite, byte[] DT)
+        {
+            using (FileStream FS = new FileStream(fileToWrite, File.Exists(fileToWrite) ? FileMode.Append : FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                FS.Write(DT, 0, DT.Length);
+                FS.Close();
+            }
+        }
         private void saveButton_Click(object sender, EventArgs e)
         {
-            if(label4.Text == "Brak wykrytego serwera")
+
+            if (label4.Text == "Brak wykrytego serwera")
             {
                 MessageBox.Show("Nie wykryto połączenia z serwerem!", "Błąd połączenia!", MessageBoxButtons.OK);
                 return;
             }
 
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "txt files (*.txt)|*.txt|mp3 files (*.mp3)|*.mp3|png files (*.png)|*.png|avi files (*.avi)|*.avi|jpg files (*.jpg)|*.jpg|All files (*.*)|*.*";
+            saveFileDialog.ShowDialog();
+            FileStream fs = (FileStream)saveFileDialog.OpenFile();
+            fs.Close();
+            
+            byte[] tmp = new byte[1024];
+            while (ns.DataAvailable)
+            {
+                ns.Read(tmp, 0, tmp.Length);
+                AppendToFile(fs.Name, tmp.ToArray());
+            }
             //Tutaj Kacprowa magia <================================================================================================== ODBIÓR PLIKU =======================
 
             /*
