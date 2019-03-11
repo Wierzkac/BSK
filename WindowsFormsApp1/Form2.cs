@@ -70,8 +70,8 @@ namespace WindowsFormsApp1
                     break;
 
                 case "OFB":
-                    //encrypted = enc.EncryptByOFB(mainForm.fileData);
-                    MessageBox.Show("Ten tryb szyfrowania nie został jeszcze zaimplementowany!\n\nWybierz inny tryb!", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
+                    encrypted = enc.EncryptByOFB(mainForm.fileData);
+                    //MessageBox.Show("Ten tryb szyfrowania nie został jeszcze zaimplementowany!\n\nWybierz inny tryb!", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
                     break;
 
                 default:
