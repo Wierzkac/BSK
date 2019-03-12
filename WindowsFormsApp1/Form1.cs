@@ -12,7 +12,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using static AsynchronousSocketListener;
 
 
 namespace WindowsFormsApp1
@@ -21,6 +20,9 @@ namespace WindowsFormsApp1
     {
         private OpenFileDialog openFileDialog1;
         public byte[] fileData = null;
+
+        private NetworkStream ns;
+        private TcpClient client;
 
         public OpenFileDialog openfileDialog1
         {
@@ -40,8 +42,24 @@ namespace WindowsFormsApp1
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
+                
+                TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 11000);
+                listener.Start();
 
-                StartListening(this);
+                while (true)
+                {
+                    Console.Write("Waiting for connection...");
+                    client = listener.AcceptTcpClient();
+
+                    Console.WriteLine("Connection accepted.");
+                    Invoke(new Action(() =>
+                    {
+                        label4.Text = "Nawiązano połączenie z klientem";
+                        label4.ForeColor = Color.Green;
+                    }));
+
+                }
+
             }).Start();
         }
 
@@ -110,10 +128,32 @@ namespace WindowsFormsApp1
 
         }
 
-
         public object ChoosenEncodingMode()
         {
             return encodingModeComboBox.SelectedItem;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (fileData == null)
+                MessageBox.Show("Musisz wybrać plik!",
+                               "ERROR",
+                               MessageBoxButtons.OK,
+                               MessageBoxIcon.Warning);
+            else
+            {
+                try
+                {
+                    ns = client.GetStream();
+                    ns.Write(fileData, 0, fileData.Length);
+                    ns.Close();
+                    client.Close();
+                }
+                catch (Exception error)
+                {
+                    Console.WriteLine(error.ToString());
+                }
+            }
         }
     }
 }
