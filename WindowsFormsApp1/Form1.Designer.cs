@@ -24,7 +24,6 @@ namespace WindowsFormsApp1
         private void InitializeComponent()
         {
             this.WybierzPlik = new System.Windows.Forms.Button();
-            this.ZapiszJako = new System.Windows.Forms.Button();
             this.encodingModeComboBox = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.startButton = new System.Windows.Forms.Button();
@@ -35,48 +34,40 @@ namespace WindowsFormsApp1
             this.colorDialog2 = new System.Windows.Forms.ColorDialog();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.fileSystemWatcher1)).BeginInit();
             this.SuspendLayout();
             // 
             // WybierzPlik
             // 
-            this.WybierzPlik.Location = new System.Drawing.Point(39, 20);
+            this.WybierzPlik.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.WybierzPlik.Location = new System.Drawing.Point(11, 34);
             this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2);
             this.WybierzPlik.Name = "WybierzPlik";
-            this.WybierzPlik.Size = new System.Drawing.Size(98, 39);
+            this.WybierzPlik.Size = new System.Drawing.Size(69, 24);
             this.WybierzPlik.TabIndex = 0;
-            this.WybierzPlik.Text = "Wybierz plik do zaszyfrowania";
+            this.WybierzPlik.Text = "Otwórz";
             this.WybierzPlik.UseVisualStyleBackColor = true;
             this.WybierzPlik.Click += new System.EventHandler(this.WybierzPlik_Click);
             // 
-            // ZapiszJako
-            // 
-            this.ZapiszJako.Location = new System.Drawing.Point(95, 402);
-            this.ZapiszJako.Margin = new System.Windows.Forms.Padding(2);
-            this.ZapiszJako.Name = "ZapiszJako";
-            this.ZapiszJako.Size = new System.Drawing.Size(130, 36);
-            this.ZapiszJako.TabIndex = 1;
-            this.ZapiszJako.Text = "Zapisz plik jako...";
-            this.ZapiszJako.UseVisualStyleBackColor = true;
-            this.ZapiszJako.Click += new System.EventHandler(this.ZapiszJako_Click);
-            // 
             // encodingModeComboBox
             // 
+            this.encodingModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.encodingModeComboBox.FormattingEnabled = true;
             this.encodingModeComboBox.Items.AddRange(new object[] {
             "ECB",
             "CBC",
             "CFB",
             "OFB"});
-            this.encodingModeComboBox.Location = new System.Drawing.Point(185, 40);
+            this.encodingModeComboBox.Location = new System.Drawing.Point(184, 35);
             this.encodingModeComboBox.Name = "encodingModeComboBox";
-            this.encodingModeComboBox.Size = new System.Drawing.Size(121, 21);
+            this.encodingModeComboBox.Size = new System.Drawing.Size(121, 24);
             this.encodingModeComboBox.TabIndex = 2;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(183, 20);
+            this.label1.Location = new System.Drawing.Point(182, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(123, 13);
             this.label1.TabIndex = 3;
@@ -84,11 +75,12 @@ namespace WindowsFormsApp1
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(247, 173);
+            this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.startButton.Location = new System.Drawing.Point(228, 173);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(75, 23);
+            this.startButton.Size = new System.Drawing.Size(94, 29);
             this.startButton.TabIndex = 4;
-            this.startButton.Text = "Rozpocznij";
+            this.startButton.Text = "Wyślij";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
@@ -100,7 +92,7 @@ namespace WindowsFormsApp1
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 81);
+            this.label2.Location = new System.Drawing.Point(12, 85);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 2;
@@ -139,11 +131,21 @@ namespace WindowsFormsApp1
             this.label4.TabIndex = 6;
             this.label4.Text = "Brak wykrytego clienta";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(151, 13);
+            this.label5.TabIndex = 7;
+            this.label5.Text = "Wybierz plik do zaszyfrowania:";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(331, 450);
+            this.ClientSize = new System.Drawing.Size(331, 220);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.startButton);
@@ -151,7 +153,6 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.encodingModeComboBox);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.ZapiszJako);
             this.Controls.Add(this.WybierzPlik);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
@@ -166,7 +167,6 @@ namespace WindowsFormsApp1
         #endregion
 
         private System.Windows.Forms.Button WybierzPlik;
-        private System.Windows.Forms.Button ZapiszJako;
         private System.Windows.Forms.ComboBox encodingModeComboBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button startButton;
@@ -177,6 +177,7 @@ namespace WindowsFormsApp1
         private System.Windows.Forms.ColorDialog colorDialog2;
         public System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label5;
     }
 }
 

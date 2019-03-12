@@ -34,11 +34,14 @@
             this.passwordTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.saveButton = new System.Windows.Forms.Button();
+            this.loginTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.addUserButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(258, 11);
+            this.button1.Location = new System.Drawing.Point(256, 11);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(72, 29);
@@ -70,7 +73,7 @@
             // 
             // passwordTextBox
             // 
-            this.passwordTextBox.Location = new System.Drawing.Point(12, 72);
+            this.passwordTextBox.Location = new System.Drawing.Point(12, 129);
             this.passwordTextBox.Name = "passwordTextBox";
             this.passwordTextBox.Size = new System.Drawing.Size(318, 20);
             this.passwordTextBox.TabIndex = 9;
@@ -78,7 +81,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 56);
+            this.label1.Location = new System.Drawing.Point(9, 113);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(129, 13);
             this.label1.TabIndex = 10;
@@ -86,19 +89,50 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(184, 116);
+            this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.saveButton.Location = new System.Drawing.Point(200, 170);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(146, 33);
+            this.saveButton.Size = new System.Drawing.Size(130, 33);
             this.saveButton.TabIndex = 11;
-            this.saveButton.Text = "Zatwierdź  i zapisz plik";
+            this.saveButton.Text = "Rozpocznij";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
+            // loginTextBox
+            // 
+            this.loginTextBox.Location = new System.Drawing.Point(12, 78);
+            this.loginTextBox.Name = "loginTextBox";
+            this.loginTextBox.Size = new System.Drawing.Size(316, 20);
+            this.loginTextBox.TabIndex = 12;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(9, 62);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(133, 13);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Podaj nazwę użytkownika:";
+            // 
+            // addUserButton
+            // 
+            this.addUserButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.addUserButton.Location = new System.Drawing.Point(13, 170);
+            this.addUserButton.Name = "addUserButton";
+            this.addUserButton.Size = new System.Drawing.Size(130, 33);
+            this.addUserButton.TabIndex = 14;
+            this.addUserButton.Text = "Utwórz profil";
+            this.addUserButton.UseVisualStyleBackColor = true;
+            this.addUserButton.Click += new System.EventHandler(this.addUserButton_Click);
             // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(352, 163);
+            this.ClientSize = new System.Drawing.Size(352, 215);
+            this.Controls.Add(this.addUserButton);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.loginTextBox);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.passwordTextBox);
@@ -121,5 +155,8 @@
         private System.Windows.Forms.TextBox passwordTextBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.TextBox loginTextBox;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button addUserButton;
     }
 }

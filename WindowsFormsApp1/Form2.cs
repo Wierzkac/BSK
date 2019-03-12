@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
-
+using System.Security.Cryptography;
 
 namespace WindowsFormsApp1
 {
@@ -70,29 +70,44 @@ namespace WindowsFormsApp1
                     break;
 
                 case "OFB":
-                    //encrypted = enc.EncryptByOFB(mainForm.fileData);
-                    MessageBox.Show("Ten tryb szyfrowania nie został jeszcze zaimplementowany!\n\nWybierz inny tryb!", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
+                    encrypted = enc.EncryptByOFB(mainForm.fileData);
+                    //MessageBox.Show("Ten tryb szyfrowania nie został jeszcze zaimplementowany!\n\nWybierz inny tryb!", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
                     break;
 
                 default:
                     MessageBox.Show("Błąd wyboru trybu szyfrowania!\n Wybierz tryb jeszcze raz", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
-                    break;
+                    return;
             }
 
-            if (encrypted == null) return;
+            //zaznaczenie progresu szyfrowania
+            this.Invoke(new Action(() =>
+            {
+                this.encodingProgressBar.Value = this.encodingProgressBar.Maximum;
+            }
+            ));
+
+
 
             /* *************************************************************************************************************************************************************************
-             * Pod encrypted jest zaszyfrowana wiadomość
-             * Klucz sesyjny (chyba) pod enc.Key;                                                                                       TU PROPONUJĘ WYSYŁANIE
-             * Wektor inicjujący pod enc.IV;
+             *                                                                                                                                 TU PROPONUJĘ ODBIÓR
              * *************************************************************************************************************************************************************************
              */
 
+            // dane pobrane od usera
+           byte[] Modulus = null;
+           byte[] Exponent = null;
 
-            mainForm.Invoke(new Action(() =>
-            {
-                mainForm.fileData = enc.DecryptByECB(encrypted);
-            }));
+
+           byte[] encryptedSessionKey = EncryptRSA(Exponent, Modulus, enc.Key);
+           byte[] encryptedIV = EncryptRSA(Exponent, Modulus, enc.IV);
+
+
+           /* *************************************************************************************************************************************************************************
+            * Pod encrypted jest zaszyfrowana wiadomość
+            * Klucz sesyjny pod encryptedSessionKey                                                                                            TU PROPONUJĘ WYSYŁANIE
+            * Wektor inicjujący pod encryptedIV
+            * *************************************************************************************************************************************************************************
+            */
 
         }
 
@@ -107,6 +122,23 @@ namespace WindowsFormsApp1
             SendingProgressBar.Minimum = 1;
             SendingProgressBar.Value = 1;
             SendingProgressBar.Step = 1;
+        }
+
+        private byte[] EncryptRSA(byte[] exponent, byte[] modulus, byte[] SessionKey)
+        {
+            //przygotowanie szyfratora
+            RSACryptoServiceProvider rsaCrypto = new RSACryptoServiceProvider();
+
+            //wprowadzenie parametrów pobranych od klienta
+            RSAParameters pars = new RSAParameters()
+            {
+                Modulus = modulus,
+                Exponent = exponent
+            };
+
+            //import parametrów i zaszyfrowanie klucza sesji
+            rsaCrypto.ImportParameters(pars);
+            return rsaCrypto.Encrypt(SessionKey, true); 
         }
 
     }
