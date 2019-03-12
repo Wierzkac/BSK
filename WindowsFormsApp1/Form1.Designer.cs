@@ -42,25 +42,14 @@ namespace WindowsFormsApp1
             // WybierzPlik
             // 
             this.WybierzPlik.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.WybierzPlik.Location = new System.Drawing.Point(11, 34);
+            this.WybierzPlik.Location = new System.Drawing.Point(10, 28);
             this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2);
             this.WybierzPlik.Name = "WybierzPlik";
-            this.WybierzPlik.Size = new System.Drawing.Size(69, 24);
+            this.WybierzPlik.Size = new System.Drawing.Size(71, 24);
             this.WybierzPlik.TabIndex = 0;
             this.WybierzPlik.Text = "Otwórz";
             this.WybierzPlik.UseVisualStyleBackColor = true;
             this.WybierzPlik.Click += new System.EventHandler(this.WybierzPlik_Click);
-            // 
-            // ZapiszJako
-            // 
-            this.ZapiszJako.Location = new System.Drawing.Point(127, 495);
-            this.ZapiszJako.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.ZapiszJako.Name = "ZapiszJako";
-            this.ZapiszJako.Size = new System.Drawing.Size(173, 44);
-            this.ZapiszJako.TabIndex = 1;
-            this.ZapiszJako.Text = "Zapisz plik jako...";
-            this.ZapiszJako.UseVisualStyleBackColor = true;
-            this.ZapiszJako.Click += new System.EventHandler(this.ZapiszJako_Click);
             // 
             // encodingModeComboBox
             // 
@@ -71,27 +60,28 @@ namespace WindowsFormsApp1
             "CBC",
             "CFB",
             "OFB"});
-            this.encodingModeComboBox.Location = new System.Drawing.Point(184, 35);
+            this.encodingModeComboBox.Location = new System.Drawing.Point(199, 28);
+            this.encodingModeComboBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.encodingModeComboBox.Name = "encodingModeComboBox";
-            this.encodingModeComboBox.Size = new System.Drawing.Size(121, 24);
+            this.encodingModeComboBox.Size = new System.Drawing.Size(120, 24);
             this.encodingModeComboBox.TabIndex = 2;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(182, 9);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(196, 7);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 17);
+            this.label1.Size = new System.Drawing.Size(123, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Wybierz tryb szyfrowania";
             // 
             // startButton
             // 
             this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.startButton.Location = new System.Drawing.Point(228, 173);
+            this.startButton.Location = new System.Drawing.Point(238, 142);
+            this.startButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(94, 29);
+            this.startButton.Size = new System.Drawing.Size(81, 26);
             this.startButton.TabIndex = 4;
             this.startButton.Text = "Wyślij";
             this.startButton.UseVisualStyleBackColor = true;
@@ -105,19 +95,19 @@ namespace WindowsFormsApp1
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 85);
+            this.label2.Location = new System.Drawing.Point(9, 69);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 17);
+            this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Wczytałeś plik:";
             // 
             // textBox1
             // 
             this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(16, 135);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox1.Location = new System.Drawing.Point(10, 85);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(408, 22);
+            this.textBox1.Size = new System.Drawing.Size(307, 20);
             this.textBox1.TabIndex = 3;
             // 
             // colorDialog2
@@ -127,9 +117,10 @@ namespace WindowsFormsApp1
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 178);
+            this.label3.Location = new System.Drawing.Point(9, 108);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 17);
+            this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 5;
             this.label3.Text = "Stan połączenia:";
             // 
@@ -137,26 +128,29 @@ namespace WindowsFormsApp1
             // 
             this.label4.AutoSize = true;
             this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(139, 178);
+            this.label4.Location = new System.Drawing.Point(9, 121);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(149, 17);
+            this.label4.Size = new System.Drawing.Size(114, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Brak wykrytego clienta";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 9);
+            this.label5.Location = new System.Drawing.Point(7, 7);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(151, 13);
             this.label5.TabIndex = 7;
             this.label5.Text = "Wybierz plik do zaszyfrowania:";
-            //
+            // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(107, 305);
+            this.button1.Location = new System.Drawing.Point(80, 248);
+            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(56, 19);
             this.button1.TabIndex = 7;
             this.button1.Text = "wyslij";
             this.button1.UseVisualStyleBackColor = true;
@@ -164,9 +158,9 @@ namespace WindowsFormsApp1
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(331, 220);
+            this.ClientSize = new System.Drawing.Size(332, 179);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
@@ -177,7 +171,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.WybierzPlik);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "SuperEncrypter";
             this.Load += new System.EventHandler(this.Form1_Load);
