@@ -15,6 +15,10 @@ namespace WindowsFormsApp1
     public partial class Form2 : Form
     {
 
+        private Encoder enc = new Encoder();
+        private byte[] encrypted = null;
+        private string choosenMode = null;
+        private byte[] encryptedSessionKey = null;
 
         private Form1 mainForm = null;
         public Form2()
@@ -42,10 +46,6 @@ namespace WindowsFormsApp1
 
         private void EncryptMessage()
         {
-            Encoder enc = new Encoder();
-            byte[] encrypted = null;
-
-            string choosenMode = null;
             mainForm.Invoke(new Action(() =>
             {
                 choosenMode = mainForm.ChoosenEncodingMode().ToString();
@@ -86,29 +86,48 @@ namespace WindowsFormsApp1
             }
             ));
 
+            Thread.Sleep(4000);
 
-
-            /* *************************************************************************************************************************************************************************
+            /* ************************************************************************************************************************************************************************
              *                                                                                                                                 TU PROPONUJĘ ODBIÓR
              * *************************************************************************************************************************************************************************
              */
 
             // dane pobrane od usera
-           byte[] Modulus = null;
-           byte[] Exponent = null;
+           byte[] Modulus = mainForm.modulus;
+           byte[] Exponent = mainForm.exponent;
 
 
-           byte[] encryptedSessionKey = EncryptRSA(Exponent, Modulus, enc.Key);
-           byte[] encryptedIV = EncryptRSA(Exponent, Modulus, enc.IV);
+           encryptedSessionKey = EncryptRSA(Exponent, Modulus, enc.Key);
 
+            Invoke(new Action(() =>
+            {
+                trySendFile();
+            }));
+            /* *************************************************************************************************************************************************************************
+             * Pod encrypted jest zaszyfrowana wiadomość
+             * Klucz sesyjny pod encryptedSessionKey                                                                                            TU PROPONUJĘ WYSYŁANIE
+             * Wektor inicjujący pod encryptedIV
+             * *************************************************************************************************************************************************************************
+             */
 
-           /* *************************************************************************************************************************************************************************
-            * Pod encrypted jest zaszyfrowana wiadomość
-            * Klucz sesyjny pod encryptedSessionKey                                                                                            TU PROPONUJĘ WYSYŁANIE
-            * Wektor inicjujący pod encryptedIV
-            * *************************************************************************************************************************************************************************
-            */
-
+        }
+        private void trySendFile()
+        {
+            try
+            {
+                mainForm.ns = mainForm.client.GetStream();
+                mainForm.ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
+                mainForm.ns.Write(enc.IV, 0, enc.IV.Length);
+                mainForm.ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
+                mainForm.ns.Write(encrypted, 0, encrypted.Length);
+                mainForm.ns.Close();
+                mainForm.client.Close();
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.ToString());
+            }
         }
 
         private void progressBarsDefaultSettings()

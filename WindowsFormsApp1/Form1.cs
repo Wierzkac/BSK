@@ -20,9 +20,10 @@ namespace WindowsFormsApp1
     {
         private OpenFileDialog openFileDialog1;
         public byte[] fileData = null;
-
-        private NetworkStream ns;
-        private TcpClient client;
+        public byte[] exponent = new byte[3];
+        public byte[] modulus = new byte[128];
+        public NetworkStream ns;
+        public TcpClient client;
 
         public OpenFileDialog openfileDialog1
         {
@@ -57,7 +58,13 @@ namespace WindowsFormsApp1
                         label4.Text = "Nawiązano połączenie z klientem";
                         label4.ForeColor = Color.Green;
                     }));
-
+                    ns = client.GetStream();
+                    while (!ns.DataAvailable) { }
+                    ns.Read(exponent, 0, 3);
+                    ns.Read(modulus, 0, 128);
+                    ns.Close();
+                    Console.WriteLine("expodent :{0}", Encoding.Default.GetString(exponent));
+                    Console.WriteLine("modulus : {0}", Encoding.Default.GetString(modulus));
                 }
 
             }).Start();
@@ -131,29 +138,6 @@ namespace WindowsFormsApp1
         public object ChoosenEncodingMode()
         {
             return encodingModeComboBox.SelectedItem;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (fileData == null)
-                MessageBox.Show("Musisz wybrać plik!",
-                               "ERROR",
-                               MessageBoxButtons.OK,
-                               MessageBoxIcon.Warning);
-            else
-            {
-                try
-                {
-                    ns = client.GetStream();
-                    ns.Write(fileData, 0, fileData.Length);
-                    ns.Close();
-                    client.Close();
-                }
-                catch (Exception error)
-                {
-                    Console.WriteLine(error.ToString());
-                }
-            }
         }
     }
 }

@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
 
         private void confirmButton_Click(object sender, EventArgs e)
         {
-
+            Registry.CurrentUser.CreateSubKey(NAME);
             //zaszyfrowanie nazwy użytkownika
             string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
 

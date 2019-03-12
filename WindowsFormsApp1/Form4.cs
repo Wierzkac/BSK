@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.IO;
 using System.Net.Sockets;
 using System.Net;
+using System.CodeDom.Compiler;
 
 namespace WindowsFormsApp1
 {
@@ -73,40 +74,41 @@ namespace WindowsFormsApp1
                 return;
             }
 
-
+            byte[] exponent = Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Exponent") as byte[];
+            byte[] modulus = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Modulus");
             // wysłanie klucza publicznego do serwera <========================================================================== PUB KEY SENDING =========================
 
+            Console.WriteLine("expodent :{0} \n", Encoding.Default.GetString(exponent));
+            Console.WriteLine("modulus : {0} \n", Encoding.Default.GetString(modulus));
 
-
-            
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "txt files (*.txt)|*.txt|mp3 files (*.mp3)|*.mp3|png files (*.png)|*.png|avi files (*.avi)|*.avi|jpg files (*.jpg)|*.jpg|All files (*.*)|*.*";
-            saveFileDialog.ShowDialog();
-            FileStream fs = (FileStream)saveFileDialog.OpenFile();
-            fs.Close();
-            
-            byte[] tmp = new byte[1024];
-            while (ns.DataAvailable)
+            try
             {
-                ns.Read(tmp, 0, tmp.Length);
-                AppendToFile(fs.Name, tmp.ToArray());
+                ns = client.GetStream();
+                ns.Write(exponent, 0, exponent.Length);
+                ns.Write(modulus, 0, modulus.Length);
             }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.ToString());
+            }
+
+            //Otrzymywanie zakodowanej wiadomości
 
             //Tutaj Kacprowa magia <================================================================================================== ODBIÓR PLIKU =======================
 
             /*
-             *    W WIADOMOŚCI POTRZEBUJĘ:
-             * 1. Klucz sesyjny
-             * 2. Wektor inicjujący
-             * 3. Tryb szyfrowania
-             * 4. Wiadomość
-             * */
+                *    W WIADOMOŚCI POTRZEBUJĘ:
+                * 1. Klucz sesyjny
+                * 2. Wektor inicjujący
+                * 3. Tryb szyfrowania
+                * 4. Wiadomość
+                * */
 
             //tu trzeba wrzucić zaszyfrowany klucz odebrany z serwera
             byte[] receivedSessionKey = new byte[32];
 
             //tu trzeba wrzucić zaszyfrowaną wiadomość
-            byte[] receivedMessage = new byte[0];
+            byte[] receivedMessage = null;
 
             //       Dwóch poniższych chyba nie trzeba szyfrować
 
@@ -116,6 +118,29 @@ namespace WindowsFormsApp1
             //tu trzeba wrzucić tryb szyfrowania
             string cipherMode = "";
 
+
+            while (!ns.DataAvailable) { }
+            var fileName = Path.GetTempFileName();
+            using (FileStream tmpfile = File.OpenWrite(fileName))
+            {
+                byte[] tmpString = new byte[3];
+                ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);
+                ns.Read(receivedIV, 0, receivedIV.Length);
+                ns.Read(tmpString, 0, tmpString.Length);
+                cipherMode = Encoding.ASCII.GetString(tmpString);
+
+                byte[] tmp = new byte[1024];
+                while (ns.DataAvailable)
+                {
+
+                    ns.Read(tmp, 0, tmp.Length);
+                    AppendToFile(tmpfile.Name, tmp.ToArray());
+                }
+            }
+            ns.Close();
+            client.Close();
+
+            receivedMessage = FileToByteArray(fileName);
 
             /*
             *      SCENARIUSZ INTERAKCJI
@@ -214,6 +239,18 @@ namespace WindowsFormsApp1
             return decrypted;
         }
 
+        private byte[] FileToByteArray(string fileName)
+        {
+            byte[] array;
+            using (FileStream fs = File.OpenRead(fileName))
+            {
+                using (BinaryReader binaryReader = new BinaryReader(fs))
+                {
+                    array = binaryReader.ReadBytes((int)fs.Length);
+                }
+            }
+            return array;
+        }
         private void ByteArrayToFile(byte[] array)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
