@@ -72,10 +72,7 @@ namespace WindowsFormsApp1
             Registry.CurrentUser.CreateSubKey(NAME).CreateSubKey(encrytpedUserName).SetValue("InverseQ", parameters.InverseQ);
 
 
-
-
-            TestRSA(parameters.Exponent, parameters.Modulus, Encoding.Default.GetBytes("Mleko"), parameters.D);
-
+           // TestRSA(parameters.Exponent, parameters.Modulus, Encoding.Default.GetBytes("Mleko"), parameters.D);
 
             //zamknięcie formy
             this.Close();
