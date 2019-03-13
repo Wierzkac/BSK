@@ -79,8 +79,8 @@ namespace WindowsFormsApp1
                 return;
             }
 
-            byte[] exponent = Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Exponent") as byte[];
-            byte[] modulus = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Modulus");
+            byte[] exponent = Registry.CurrentUser.OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).GetValue("Exponent") as byte[];
+            byte[] modulus = (byte[])Registry.CurrentUser.OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).GetValue("Modulus");
             // wysłanie klucza publicznego do serwera <========================================================================== PUB KEY SENDING =========================
 
             Console.WriteLine("expodent :{0} \n", Encoding.Default.GetString(exponent));
@@ -158,11 +158,11 @@ namespace WindowsFormsApp1
             *  5. Zapis 
             */
 
-            byte[] hashedPassword = HashUserPassword(passwordTextBox.Text);
-            byte[] decprivateKey = DecryptPrivateKey(hashedPassword);
-            byte[] sessionKey = DecryptRSA(receivedSessionKey, decprivateKey);
-            byte[] IV = DecryptRSA(receivedIV, decprivateKey);
-            byte[] message =  DecryptMessage(sessionKey, IV, receivedMessage, cipherMode);
+            ////////byte[] hashedPassword = HashUserPassword(passwordTextBox.Text);
+            ////////byte[] decprivateKey = DecryptPrivateKey(hashedPassword);
+            ////////byte[] sessionKey = DecryptRSA(receivedSessionKey, decprivateKey);
+            ////////byte[] IV = DecryptRSA(receivedIV, decprivateKey);
+            ////////byte[] message =  DecryptMessage(sessionKey, IV, receivedMessage, cipherMode);
 
             #region Deszyfrowanie_wiadomości
 
