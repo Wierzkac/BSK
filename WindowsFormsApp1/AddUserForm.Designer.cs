@@ -77,6 +77,7 @@
             this.passwordTextBox.Name = "passwordTextBox";
             this.passwordTextBox.Size = new System.Drawing.Size(260, 20);
             this.passwordTextBox.TabIndex = 4;
+            this.passwordTextBox.UseSystemPasswordChar = true;
             // 
             // repeatPasswordTextBox
             // 
@@ -84,6 +85,7 @@
             this.repeatPasswordTextBox.Name = "repeatPasswordTextBox";
             this.repeatPasswordTextBox.Size = new System.Drawing.Size(260, 20);
             this.repeatPasswordTextBox.TabIndex = 5;
+            this.repeatPasswordTextBox.UseSystemPasswordChar = true;
             // 
             // confirmButton
             // 

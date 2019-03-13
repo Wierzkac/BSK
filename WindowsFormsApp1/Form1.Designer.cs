@@ -42,7 +42,7 @@ namespace WindowsFormsApp1
             // WybierzPlik
             // 
             this.WybierzPlik.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-            this.WybierzPlik.Location = new System.Drawing.Point(11, 34);
+            this.WybierzPlik.Location = new System.Drawing.Point(10, 28);
             this.WybierzPlik.Margin = new System.Windows.Forms.Padding(2);
             this.WybierzPlik.Name = "WybierzPlik";
             this.WybierzPlik.Size = new System.Drawing.Size(102, 37);
@@ -71,7 +71,7 @@ namespace WindowsFormsApp1
             this.label1.Location = new System.Drawing.Point(259, 9);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(165, 17);
+            this.label1.Size = new System.Drawing.Size(123, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Wybierz tryb szyfrowania";
             // 
@@ -80,7 +80,7 @@ namespace WindowsFormsApp1
             this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.startButton.Location = new System.Drawing.Point(330, 154);
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(94, 29);
+            this.startButton.Size = new System.Drawing.Size(81, 26);
             this.startButton.TabIndex = 4;
             this.startButton.Text = "Wyślij";
             this.startButton.UseVisualStyleBackColor = true;
@@ -94,9 +94,10 @@ namespace WindowsFormsApp1
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 85);
+            this.label2.Location = new System.Drawing.Point(9, 69);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 17);
+            this.label2.Size = new System.Drawing.Size(80, 13);
             this.label2.TabIndex = 2;
             this.label2.Text = "Wczytałeś plik:";
             // 
@@ -118,7 +119,7 @@ namespace WindowsFormsApp1
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(13, 154);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(113, 17);
+            this.label3.Size = new System.Drawing.Size(88, 13);
             this.label3.TabIndex = 5;
             this.label3.Text = "Stan połączenia:";
             // 
@@ -128,14 +129,15 @@ namespace WindowsFormsApp1
             this.label4.ForeColor = System.Drawing.Color.Red;
             this.label4.Location = new System.Drawing.Point(133, 154);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(149, 17);
+            this.label4.Size = new System.Drawing.Size(114, 13);
             this.label4.TabIndex = 6;
             this.label4.Text = "Brak wykrytego clienta";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 9);
+            this.label5.Location = new System.Drawing.Point(7, 7);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(201, 17);
             this.label5.TabIndex = 7;
@@ -143,7 +145,7 @@ namespace WindowsFormsApp1
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(443, 199);
             this.Controls.Add(this.label5);
@@ -156,7 +158,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.WybierzPlik);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "Form1";
             this.Text = "SuperEncrypter";
             this.Load += new System.EventHandler(this.Form1_Load);

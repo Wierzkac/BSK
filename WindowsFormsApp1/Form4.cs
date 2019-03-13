@@ -20,7 +20,10 @@ namespace WindowsFormsApp1
 
     public partial class Form4 : Form
     {
-        private const string NAME = "SuperEncrypter";
+        private const string NAME_KEY = "SuperEncrypter";
+        private const string SOFTWARE_KEY = "Software";
+        private const string PUBLIC_KEY = "Public";
+        private const string PRIVATE_KEY = "Private";
 
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -57,6 +60,8 @@ namespace WindowsFormsApp1
         }
         private void saveButton_Click(object sender, EventArgs e)
         {
+            //stworzenie klucza programu na wypadek gdyby taki jeszcze nie istniał
+            Registry.CurrentUser.CreateSubKey(SOFTWARE_KEY).CreateSubKey(NAME_KEY);
 
             if (label4.Text == "Brak wykrytego serwera")
             {
@@ -68,7 +73,7 @@ namespace WindowsFormsApp1
             string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
 
             //sprawdzenie czy występuje już taki użytkownik jakiego nazwę wpisano
-            if (Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName) == null)
+            if (Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName) == null)
             {
                 MessageBox.Show("Taki użytkownik nie istnieje!\nWprowadź inną nazwę użytkownika!", "Błędna nazwa użytkownika", MessageBoxButtons.OK);
                 return;
@@ -91,7 +96,7 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine(error.ToString());
             }
-
+            
             //Otrzymywanie zakodowanej wiadomości
 
             //Tutaj Kacprowa magia <================================================================================================== ODBIÓR PLIKU =======================
@@ -118,7 +123,8 @@ namespace WindowsFormsApp1
             //tu trzeba wrzucić tryb szyfrowania
             string cipherMode = "";
 
-
+            //===================================================================================================================== KONIEC ODBIORU PLIKU ===============
+            
             while (!ns.DataAvailable) { }
             var fileName = Path.GetTempFileName();
             using (FileStream tmpfile = File.OpenWrite(fileName))
@@ -157,47 +163,67 @@ namespace WindowsFormsApp1
             byte[] sessionKey = DecryptRSA(receivedSessionKey, decprivateKey);
             byte[] IV = DecryptRSA(receivedIV, decprivateKey);
             byte[] message =  DecryptMessage(sessionKey, IV, receivedMessage, cipherMode);
+
+            #region Deszyfrowanie_wiadomości
+
+            //odszyfrowanie kluczas sesyjnego algorytmem RSA
+            byte[] sessionKey = DecryptRSA(receivedSessionKey);
+            
+            //odszyfrowanie pliku za pomocą odszyfrowanego klucza sesji, otrzymanego IV i trybu szyfrowania      
+            byte[] message =  DecryptMessage(sessionKey, receivedIV, receivedMessage, cipherMode);
+
+            #endregion
+
+            //zapis do pliku
             ByteArrayToFile(message);
 
         }
 
-        private byte[] DecryptPrivateKey(byte[] hashedPassword)
+        private byte[] DecryptPrivateData(byte[] hashedPassword, byte[] encryptedPrivateData)
         {
             // wektor inicjujący do odszyfrowania hasła
             byte[] IV = new byte[16];
             for (int i = 0; i < 16; i++)
                 IV[i] = 0;
 
-            //zahasowanie nazwy użytkownika do odczytu zaszyfrowanego klucza prywatnego
-            string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
-
-            //odczyt zaszyfrowanego klucza prywatnego
-            byte[] encryptedPrivateKey = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("P_Key");
-
-            return new Encoder(hashedPassword, IV).DecryptByCBC(encryptedPrivateKey);
+            return new Encoder(hashedPassword, IV).DecryptByCBC(encryptedPrivateData);
         }
 
-        public byte[] HashUserPassword(string plainPassword)
-        {
-            return SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(plainPassword));
-        }
-
-        private byte[] DecryptRSA(byte[] encryptedSessionKey, byte[] decryptedPrivateKey)
+        private byte[] DecryptRSA(byte[] encryptedSessionKey)
         {
             //zahasowanie nazwy użytkownika do danych z rejestru
             string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
 
+            //zahashowanie hasła
+            byte[] hashedPassword = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(passwordTextBox.Text));
+
+            //pobranie zaszyfrowanych danych z rejestru
+            byte[] InverseQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("InverseQ");
+            byte[] DP = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DP");
+            byte[] P = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("P");
+            byte[] DQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DQ");
+            byte[] Q = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("Q");
+            byte[] D = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("D");
+
+            //odszyfrowanie danych
+            InverseQ = DecryptPrivateData(hashedPassword, InverseQ);
+            DP = DecryptPrivateData(hashedPassword, DP);
+            P = DecryptPrivateData(hashedPassword, P);
+            DQ = DecryptPrivateData(hashedPassword, DQ);
+            Q = DecryptPrivateData(hashedPassword, Q);
+            D = DecryptPrivateData(hashedPassword, D);
+
             //uzupełnienie parametrów do deszyfrowania klucza sesyjnego
             RSAParameters pars = new RSAParameters()
             {
-                Modulus = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Modulus"),
-                Exponent = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Exponent"),
-                InverseQ = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("InverseQ"),
-                DP = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("DP"),
-                P = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("P"),
-                DQ = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("DQ"),
-                Q = (byte[])Registry.CurrentUser.OpenSubKey(NAME).OpenSubKey(encrytpedUserName).GetValue("Q"),
-                D = decryptedPrivateKey
+                Modulus = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Modulus"),
+                Exponent = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Exponent"),
+                InverseQ = InverseQ,
+                DP = DP,
+                P = P,
+                DQ = DQ,
+                Q = Q,
+                D = D
             };
 
             //stworzenie decryptora i import parametrów
