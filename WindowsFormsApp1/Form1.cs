@@ -20,10 +20,6 @@ namespace WindowsFormsApp1
     {
         private OpenFileDialog openFileDialog1;
         public byte[] fileData = null;
-        public byte[] exponent = new byte[3];
-        public byte[] modulus = new byte[128];
-        public NetworkStream ns;
-        public TcpClient client;
 
         public OpenFileDialog openfileDialog1
         {
@@ -40,34 +36,6 @@ namespace WindowsFormsApp1
             encodingModeComboBox.SelectedItem = null;
             encodingModeComboBox.SelectedItem = "ECB";
             
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                
-                TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 11000);
-                listener.Start();
-
-                while (true)
-                {
-                    Console.Write("Waiting for connection...");
-                    client = listener.AcceptTcpClient();
-
-                    Console.WriteLine("Connection accepted.");
-                    Invoke(new Action(() =>
-                    {
-                        label4.Text = "Nawiązano połączenie z klientem";
-                        label4.ForeColor = Color.Green;
-                    }));
-                    ns = client.GetStream();
-                    while (!ns.DataAvailable) { }
-                    ns.Read(exponent, 0, 3);
-                    ns.Read(modulus, 0, 128);
-                    ns.Close();
-                    Console.WriteLine("expodent :{0}", Encoding.Default.GetString(exponent));
-                    Console.WriteLine("modulus : {0}", Encoding.Default.GetString(modulus));
-                }
-
-            }).Start();
         }
 
         private void WybierzPlik_Click(object sender, EventArgs e)

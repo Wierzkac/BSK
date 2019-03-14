@@ -6,6 +6,8 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
 using System.Security.Cryptography;
@@ -14,11 +16,17 @@ namespace WindowsFormsApp1
 {
     public partial class Form2 : Form
     {
+        
+        private NetworkStream ns;
+        private TcpClient client;
+        private TcpListener listener;
 
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
         private byte[] encryptedSessionKey = null;
+        private byte[] exponent = new byte[3];
+        private byte[] modulus = new byte[128];
 
         private Form1 mainForm = null;
         public Form2()
@@ -30,7 +38,35 @@ namespace WindowsFormsApp1
         {
             mainForm = mF;
             InitializeComponent();
-           
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+
+                listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 11000);
+                listener.Start();
+
+                while (true)
+                {
+                    Console.Write("Waiting for connection...");
+                    client = listener.AcceptTcpClient();
+
+                    Console.WriteLine("Connection accepted.");
+                    Invoke(new Action(() =>
+                    {
+                        mainForm.label4.Text = "Nawiązano połączenie z klientem";
+                        mainForm.label4.ForeColor = Color.Green;
+                    }));
+                    ns = client.GetStream();
+                    while (!ns.DataAvailable) { }
+                    ns.Read(exponent, 0, 3);
+                    ns.Read(modulus, 0, 128);
+                    Console.WriteLine("expodent :{0}", Encoding.Default.GetString(exponent));
+                    Console.WriteLine("modulus : {0}", Encoding.Default.GetString(modulus));
+                }
+
+            }).Start();
+
         }
         private void Form2_Load(object sender, EventArgs e)
         {
@@ -94,16 +130,28 @@ namespace WindowsFormsApp1
              */
 
             // dane pobrane od usera
-           byte[] Modulus = mainForm.modulus;
-           byte[] Exponent = mainForm.exponent;
+            
+           encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
 
 
-           encryptedSessionKey = EncryptRSA(Exponent, Modulus, enc.Key);
-
-            Invoke(new Action(() =>
+            try
             {
-                trySendFile();
-            }));
+                ns = client.GetStream();
+                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
+                ns.Write(enc.IV, 0, enc.IV.Length);
+                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
+                ns.Write(encrypted, 0, encrypted.Length);
+                ns.Close();
+                client.Close();
+            }
+            catch (Exception error)
+            {
+                Console.WriteLine(error.ToString());
+            }
+            //Invoke(new Action(() =>
+            //{
+            //    trySendFile();
+            //}));
             /* *************************************************************************************************************************************************************************
              * Pod encrypted jest zaszyfrowana wiadomość
              * Klucz sesyjny pod encryptedSessionKey                                                                                            TU PROPONUJĘ WYSYŁANIE
@@ -116,13 +164,13 @@ namespace WindowsFormsApp1
         {
             try
             {
-                mainForm.ns = mainForm.client.GetStream();
-                mainForm.ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
-                mainForm.ns.Write(enc.IV, 0, enc.IV.Length);
-                mainForm.ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
-                mainForm.ns.Write(encrypted, 0, encrypted.Length);
-                mainForm.ns.Close();
-                mainForm.client.Close();
+                ns = client.GetStream();
+                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
+                ns.Write(enc.IV, 0, enc.IV.Length);
+                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
+                ns.Write(encrypted, 0, encrypted.Length);
+                ns.Close();
+                client.Close();
             }
             catch (Exception error)
             {
@@ -157,7 +205,7 @@ namespace WindowsFormsApp1
 
             //import parametrów i zaszyfrowanie klucza sesji
             rsaCrypto.ImportParameters(pars);
-            return rsaCrypto.Encrypt(SessionKey, true); 
+            return rsaCrypto.Encrypt(SessionKey, false); 
         }
 
     }

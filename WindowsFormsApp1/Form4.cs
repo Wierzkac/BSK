@@ -35,24 +35,11 @@ namespace WindowsFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-
-                client = new TcpClient("127.0.0.1", 11000);
-                ns = client.GetStream();
-                Invoke(new Action(() =>
-                {
-                    label4.Text = "Nawiązano połączenie z klientem";
-                    label4.ForeColor = Color.Green;
-                }));
-
-            }).Start();
 
         }
         public static void AppendToFile(string fileToWrite, byte[] DT)
         {
-            using (FileStream FS = new FileStream(fileToWrite, File.Exists(fileToWrite) ? FileMode.Append : FileMode.OpenOrCreate, FileAccess.Write))
+            using (FileStream FS = new FileStream(fileToWrite, FileMode.Append, FileAccess.Write))
             {
                 FS.Write(DT, 0, DT.Length);
                 FS.Close();
@@ -60,6 +47,16 @@ namespace WindowsFormsApp1
         }
         private void saveButton_Click(object sender, EventArgs e)
         {
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                client = new TcpClient("127.0.0.1", 11000);
+                ns = client.GetStream();
+            }).Start();
+
+            label4.Text = "Nawiązano połączenie z klientem";
+            label4.ForeColor = Color.Green;
+
             //stworzenie klucza programu na wypadek gdyby taki jeszcze nie istniał
             Registry.CurrentUser.CreateSubKey(SOFTWARE_KEY).CreateSubKey(NAME_KEY);
 
@@ -79,8 +76,8 @@ namespace WindowsFormsApp1
                 return;
             }
 
-            byte[] exponent = Registry.CurrentUser.OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).GetValue("Exponent") as byte[];
-            byte[] modulus = (byte[])Registry.CurrentUser.OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).GetValue("Modulus");
+            byte[] exponent = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey("Public").GetValue("Exponent");
+            byte[] modulus = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey("Public").GetValue("Modulus");
             // wysłanie klucza publicznego do serwera <========================================================================== PUB KEY SENDING =========================
 
             Console.WriteLine("expodent :{0} \n", Encoding.Default.GetString(exponent));
@@ -124,29 +121,32 @@ namespace WindowsFormsApp1
             string cipherMode = "";
 
             //===================================================================================================================== KONIEC ODBIORU PLIKU ===============
-            
+            while(ns == null) { }
+            ns = client.GetStream();
+            ns.Write(exponent, 0, exponent.Length);
+            ns.Write(modulus, 0, modulus.Length);
             while (!ns.DataAvailable) { }
-            var fileName = Path.GetTempFileName();
-            using (FileStream tmpfile = File.OpenWrite(fileName))
+            string tempFile = Path.GetTempFileName();
+
+
+            byte[] tmpString = new byte[3];
+            ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);
+            ns.Read(receivedIV, 0, receivedIV.Length);
+            ns.Read(tmpString, 0, tmpString.Length);
+            cipherMode = Encoding.ASCII.GetString(tmpString);
+
+            byte[] tmp = new byte[1024];
+            while (ns.DataAvailable)
             {
-                byte[] tmpString = new byte[3];
-                ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);
-                ns.Read(receivedIV, 0, receivedIV.Length);
-                ns.Read(tmpString, 0, tmpString.Length);
-                cipherMode = Encoding.ASCII.GetString(tmpString);
 
-                byte[] tmp = new byte[1024];
-                while (ns.DataAvailable)
-                {
-
-                    ns.Read(tmp, 0, tmp.Length);
-                    AppendToFile(tmpfile.Name, tmp.ToArray());
-                }
+                ns.Read(tmp, 0, tmp.Length);
+                AppendToFile(tempFile, tmp.ToArray());
             }
+
             ns.Close();
             client.Close();
 
-            receivedMessage = FileToByteArray(fileName);
+            receivedMessage = FileToByteArray(tempFile);
 
             /*
             *      SCENARIUSZ INTERAKCJI
@@ -157,13 +157,7 @@ namespace WindowsFormsApp1
             *  4. Odszyfrowanie wiadomosci
             *  5. Zapis 
             */
-
-            ////////byte[] hashedPassword = HashUserPassword(passwordTextBox.Text);
-            ////////byte[] decprivateKey = DecryptPrivateKey(hashedPassword);
-            ////////byte[] sessionKey = DecryptRSA(receivedSessionKey, decprivateKey);
-            ////////byte[] IV = DecryptRSA(receivedIV, decprivateKey);
-            ////////byte[] message =  DecryptMessage(sessionKey, IV, receivedMessage, cipherMode);
-
+            
             #region Deszyfrowanie_wiadomości
 
             //odszyfrowanie kluczas sesyjnego algorytmem RSA
@@ -188,6 +182,51 @@ namespace WindowsFormsApp1
 
             return new Encoder(hashedPassword, IV).DecryptByCBC(encryptedPrivateData);
         }
+
+        //private byte[] DecryptRSA(byte[] encryptedSessionKey)
+        //{
+        //    //zahasowanie nazwy użytkownika do danych z rejestru
+        //    string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
+
+        //    //zahashowanie hasła
+        //    byte[] hashedPassword = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(passwordTextBox.Text));
+
+        //    //pobranie zaszyfrowanych danych z rejestru
+        //    byte[] InverseQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("InverseQ");
+        //    byte[] DP = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DP");
+        //    byte[] P = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("P");
+        //    byte[] DQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DQ");
+        //    byte[] Q = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("Q");
+        //    byte[] D = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("D");
+
+        //    //odszyfrowanie danych
+        //    InverseQ = DecryptPrivateData(hashedPassword, InverseQ);
+        //    DP = DecryptPrivateData(hashedPassword, DP);
+        //    P = DecryptPrivateData(hashedPassword, P);
+        //    DQ = DecryptPrivateData(hashedPassword, DQ);
+        //    Q = DecryptPrivateData(hashedPassword, Q);
+        //    D = DecryptPrivateData(hashedPassword, D);
+
+        //    //uzupełnienie parametrów do deszyfrowania klucza sesyjnego
+        //    RSAParameters pars = new RSAParameters()
+        //    {
+        //        Modulus = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Modulus"),
+        //        Exponent = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Exponent"),
+        //        InverseQ = InverseQ,
+        //        DP = DP,
+        //        P = P,
+        //        DQ = DQ,
+        //        Q = Q,
+        //        D = D
+        //    };
+
+        //    //stworzenie decryptora i import parametrów
+        //    RSACryptoServiceProvider decryptor = new RSACryptoServiceProvider();
+        //    decryptor.ImportParameters(pars);
+
+        //    //zwrócenie wartości odszyfrowanego klucza sesji
+        //    return decryptor.Decrypt(encryptedSessionKey, false);
+        //}
 
         private byte[] DecryptRSA(byte[] encryptedSessionKey)
         {
@@ -233,6 +272,7 @@ namespace WindowsFormsApp1
             //zwrócenie wartości odszyfrowanego klucza sesji
             return decryptor.Decrypt(encryptedSessionKey, false);
         }
+
 
         private byte[] DecryptMessage(byte[] Key, byte[] IV, byte[] message, string cipherMode)
         {
