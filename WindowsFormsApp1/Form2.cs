@@ -150,12 +150,15 @@ namespace WindowsFormsApp1
                 ns.Write(encrypted, 0, encrypted.Length);                                                           // Plik
 
                 while (!ns.DataAvailable) { }
+
                 byte[] tmpString = new byte[10];
                 string sygnal;
                 ns.Read(tmpString, 0, tmpString.Length);
                 sygnal = Encoding.ASCII.GetString(tmpString);
-                if (sygnal == "Udalo sie!")
-                    ns.Close();
+                
+                ns.Close();
+                client.Close();
+                
             }
             catch (Exception error)
             {
