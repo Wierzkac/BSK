@@ -24,8 +24,8 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        private const string addressip = "192.168.43.94";
-        //private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "127.0.0.1";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -154,15 +154,17 @@ namespace WindowsFormsApp1
             ns.Read(tmpString, 0, tmpString.Length);                                // Nazwa trybu szyfrowania
             cipherMode = Encoding.ASCII.GetString(tmpString);
 
+            Console.WriteLine("Przed odebraniem pliku");
             tmp = new byte[1024];
+            Thread.Sleep(4000);
             while (ns.DataAvailable)
             {
 
                 ns.Read(tmp, 0, tmp.Length);                                        // Plik
                 AppendToFile(tempFile, tmp.ToArray());
             }
-           
-            ns.Write(Encoding.ASCII.GetBytes("Udalo sie!"), 0, 10);                // Wyslij SYGNAL OD KLIENTA
+            Console.WriteLine("Po odebraniu pliku");
+
             ns.Close();
             client.Close();
 
@@ -297,7 +299,6 @@ namespace WindowsFormsApp1
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.FileName = name;
-            saveFileDialog.Filter = "txt files (*.txt)|*.txt|mp3 files (*.mp3)|*.mp3|png files (*.png)|*.png|avi files (*.avi)|*.avi|jpg files (*.jpg)|*.jpg|All files (*.*)|*.*";
             saveFileDialog.ShowDialog();
 
             FileStream fs = (System.IO.FileStream)saveFileDialog.OpenFile();

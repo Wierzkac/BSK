@@ -60,7 +60,7 @@
             // passwordTextBox
             // 
             this.passwordTextBox.Location = new System.Drawing.Point(16, 159);
-            this.passwordTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.passwordTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.passwordTextBox.Name = "passwordTextBox";
             this.passwordTextBox.Size = new System.Drawing.Size(423, 22);
             this.passwordTextBox.TabIndex = 9;
@@ -80,7 +80,7 @@
             // 
             this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.saveButton.Location = new System.Drawing.Point(267, 209);
-            this.saveButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.saveButton.Margin = new System.Windows.Forms.Padding(4);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(173, 41);
             this.saveButton.TabIndex = 11;
@@ -91,7 +91,7 @@
             // loginTextBox
             // 
             this.loginTextBox.Location = new System.Drawing.Point(16, 96);
-            this.loginTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.loginTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.loginTextBox.Name = "loginTextBox";
             this.loginTextBox.Size = new System.Drawing.Size(420, 22);
             this.loginTextBox.TabIndex = 12;
@@ -110,7 +110,7 @@
             // 
             this.addUserButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.addUserButton.Location = new System.Drawing.Point(17, 209);
-            this.addUserButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.addUserButton.Margin = new System.Windows.Forms.Padding(4);
             this.addUserButton.Name = "addUserButton";
             this.addUserButton.Size = new System.Drawing.Size(173, 41);
             this.addUserButton.TabIndex = 14;
@@ -131,6 +131,7 @@
             this.Controls.Add(this.passwordTextBox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form4";
             this.Text = "SuperEncrypter - Client";

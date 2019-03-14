@@ -60,7 +60,7 @@ namespace WindowsFormsApp1
             "CFB",
             "OFB"});
             this.encodingModeComboBox.Location = new System.Drawing.Point(349, 53);
-            this.encodingModeComboBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.encodingModeComboBox.Margin = new System.Windows.Forms.Padding(4);
             this.encodingModeComboBox.Name = "encodingModeComboBox";
             this.encodingModeComboBox.Size = new System.Drawing.Size(215, 28);
             this.encodingModeComboBox.TabIndex = 2;
@@ -79,7 +79,7 @@ namespace WindowsFormsApp1
             // 
             this.startButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.startButton.Location = new System.Drawing.Point(440, 190);
-            this.startButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.startButton.Margin = new System.Windows.Forms.Padding(4);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(108, 32);
             this.startButton.TabIndex = 4;
@@ -105,7 +105,7 @@ namespace WindowsFormsApp1
             // 
             this.textBox1.Enabled = false;
             this.textBox1.Location = new System.Drawing.Point(17, 130);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(5);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(555, 22);
             this.textBox1.TabIndex = 3;
@@ -158,6 +158,7 @@ namespace WindowsFormsApp1
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.WybierzPlik);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Form1";
             this.Text = "SuperEncrypter";

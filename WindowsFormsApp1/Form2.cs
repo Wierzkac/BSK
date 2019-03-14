@@ -21,8 +21,8 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        private const string addressip = "192.168.43.94";
-        //private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "127.0.0.1";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
@@ -30,6 +30,7 @@ namespace WindowsFormsApp1
         private byte[] exponent = new byte[3];
         private byte[] modulus = new byte[128];
         private bool przesylDone = false;
+        private Thread listening;
 
         private Form1 mainForm = null;
         public Form2()
@@ -42,7 +43,7 @@ namespace WindowsFormsApp1
             mainForm = mF;
             InitializeComponent();
 
-            new Thread(() =>
+            listening = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
 
@@ -69,7 +70,8 @@ namespace WindowsFormsApp1
                     Console.WriteLine("modulus : {0}", Encoding.Default.GetString(modulus));
                 }
 
-            }).Start();
+            });
+            listening.Start();
 
         }
         private void Form2_Load(object sender, EventArgs e)
@@ -135,6 +137,11 @@ namespace WindowsFormsApp1
             // dane pobrane od usera
             FileInfo f = new FileInfo(mainForm.openfileDialog1.FileName);
             long s1 = f.Length;
+            Invoke(new Action(() =>
+            {
+                encodingProgressBar.Maximum = (int)s1;
+            }
+            ));
             byte[] fileSize = BitConverter.GetBytes(s1);
             encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
             byte[] fileName = Encoding.ASCII.GetBytes(fileNameLabel.Text);
@@ -148,17 +155,19 @@ namespace WindowsFormsApp1
                 ns.Write(enc.IV, 0, enc.IV.Length);                                                                 // IV
                 ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);     // Nazwa trybu szyfrowania
                 ns.Write(encrypted, 0, encrypted.Length);                                                           // Plik
-
-                while (!ns.DataAvailable) { }
-
-                byte[] tmpString = new byte[10];
-                string sygnal;
-                ns.Read(tmpString, 0, tmpString.Length);
-                sygnal = Encoding.ASCII.GetString(tmpString);
                 
+                while (ns.DataAvailable)
+                {
+                    //Invoke(new Action(() =>
+                    //{
+                    //    int temp = (int)s1 / 1024 - (int)ns.Length;
+                    //    encodingProgressBar.Value = temp;
+                    //}
+                    //));
+                }
+
                 ns.Close();
                 client.Close();
-                
             }
             catch (Exception error)
             {
