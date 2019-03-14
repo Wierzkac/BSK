@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Windows.Forms;
 using System.Threading;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace WindowsFormsApp1
 {
@@ -132,18 +133,23 @@ namespace WindowsFormsApp1
             */
 
             // dane pobrane od usera
-            byte[] fileSize = BitConverter.GetBytes((mainForm.openfileDialog1.FileName).Length);
+            FileInfo f = new FileInfo(mainForm.openfileDialog1.FileName);
+            long s1 = f.Length;
+            byte[] fileSize = BitConverter.GetBytes(s1);
             encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
+            byte[] fileName = Encoding.ASCII.GetBytes(fileNameLabel.Text);
             try
             {
                 ns = client.GetStream();
-                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);                                                   // Klucz sesyjny
-                ns.Write(fileSize, 0, fileSize.Length);                                                                         // Wielkosc pliku
-                ns.Write(Encoding.ASCII.GetBytes(fileNameLabel.Text), 0, 60);   // Nazwa pliku
-                ns.Write(enc.IV, 0, enc.IV.Length);                                                                             // IV
-                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);                 // Nazwa trybu szyfrowania
-                ns.Write(encrypted, 0, encrypted.Length);                                                                       // Plik
+                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);                                       // Klucz sesyjny
+                ns.Write(fileSize, 0, fileSize.Length);                                                             // Wielkosc pliku
+                ns.Write(BitConverter.GetBytes(fileName.Length), 0, 4);                                             // Wielkosc nazwy
+                ns.Write(fileName, 0, fileName.Length);                                                             // Nazwa pliku
+                ns.Write(enc.IV, 0, enc.IV.Length);                                                                 // IV
+                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);     // Nazwa trybu szyfrowania
+                ns.Write(encrypted, 0, encrypted.Length);                                                           // Plik
 
+                while (!ns.DataAvailable) { }
                 byte[] tmpString = new byte[10];
                 string sygnal;
                 ns.Read(tmpString, 0, tmpString.Length);

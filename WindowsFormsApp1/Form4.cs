@@ -24,8 +24,8 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "127.0.0.1";
+        private const string addressip = "192.168.43.94";
+        //private const string addressip = "127.0.0.1";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -132,18 +132,22 @@ namespace WindowsFormsApp1
             string tempFile = Path.GetTempFileName();
 
          
-            byte[] tmp = null;
+            byte[] tmp = new byte[8];
             long fileSize;
-            String fileName;
+            string fileName="";
             byte[] tmpString = new byte[3];
 
             ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);              // Klucz sesyjny
 
-            ns.Read(tmp, 0, sizeof(long));                                          // Wielkosc pliku
+            ns.Read(tmp, 0, tmp.Length);                                          // Wielkosc pliku
             fileSize = BitConverter.ToInt64(tmp, 0);
-            
-            tmp = new byte[60];
-            ns.Read(tmp, 0, 60);                                                    // Nazwa pliku
+
+            tmp = new byte[4];
+            ns.Read(tmp, 0, 4);                                                   // Wielkosc nazwy
+            int fileNameSize = BitConverter.ToInt32(tmp, 0);
+
+            tmp = new byte[fileNameSize];
+            ns.Read(tmp, 0, tmp.Length);                                                    // Nazwa pliku
             fileName = Encoding.ASCII.GetString(tmp);
 
             ns.Read(receivedIV, 0, receivedIV.Length);                              // IV
@@ -185,7 +189,7 @@ namespace WindowsFormsApp1
             #endregion
 
             //zapis do pliku
-            ByteArrayToFile(message);
+            ByteArrayToFile(message, fileName);
 
         }
 
@@ -198,51 +202,7 @@ namespace WindowsFormsApp1
 
             return new Encoder(hashedPassword, IV).DecryptByCBC(encryptedPrivateData);
         }
-
-        //private byte[] DecryptRSA(byte[] encryptedSessionKey)
-        //{
-        //    //zahasowanie nazwy użytkownika do danych z rejestru
-        //    string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
-
-        //    //zahashowanie hasła
-        //    byte[] hashedPassword = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(passwordTextBox.Text));
-
-        //    //pobranie zaszyfrowanych danych z rejestru
-        //    byte[] InverseQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("InverseQ");
-        //    byte[] DP = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DP");
-        //    byte[] P = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("P");
-        //    byte[] DQ = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("DQ");
-        //    byte[] Q = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("Q");
-        //    byte[] D = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PRIVATE_KEY).GetValue("D");
-
-        //    //odszyfrowanie danych
-        //    InverseQ = DecryptPrivateData(hashedPassword, InverseQ);
-        //    DP = DecryptPrivateData(hashedPassword, DP);
-        //    P = DecryptPrivateData(hashedPassword, P);
-        //    DQ = DecryptPrivateData(hashedPassword, DQ);
-        //    Q = DecryptPrivateData(hashedPassword, Q);
-        //    D = DecryptPrivateData(hashedPassword, D);
-
-        //    //uzupełnienie parametrów do deszyfrowania klucza sesyjnego
-        //    RSAParameters pars = new RSAParameters()
-        //    {
-        //        Modulus = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Modulus"),
-        //        Exponent = (byte[])Registry.CurrentUser.OpenSubKey(SOFTWARE_KEY).OpenSubKey(NAME_KEY).OpenSubKey(encrytpedUserName).OpenSubKey(PUBLIC_KEY).GetValue("Exponent"),
-        //        InverseQ = InverseQ,
-        //        DP = DP,
-        //        P = P,
-        //        DQ = DQ,
-        //        Q = Q,
-        //        D = D
-        //    };
-
-        //    //stworzenie decryptora i import parametrów
-        //    RSACryptoServiceProvider decryptor = new RSACryptoServiceProvider();
-        //    decryptor.ImportParameters(pars);
-
-        //    //zwrócenie wartości odszyfrowanego klucza sesji
-        //    return decryptor.Decrypt(encryptedSessionKey, false);
-        //}
+        
 
         private byte[] DecryptRSA(byte[] encryptedSessionKey)
         {
@@ -333,9 +293,10 @@ namespace WindowsFormsApp1
             }
             return array;
         }
-        private void ByteArrayToFile(byte[] array)
+        private void ByteArrayToFile(byte[] array, string name)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.FileName = name;
             saveFileDialog.Filter = "txt files (*.txt)|*.txt|mp3 files (*.mp3)|*.mp3|png files (*.png)|*.png|avi files (*.avi)|*.avi|jpg files (*.jpg)|*.jpg|All files (*.*)|*.*";
             saveFileDialog.ShowDialog();
 
