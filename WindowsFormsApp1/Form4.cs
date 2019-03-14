@@ -54,19 +54,17 @@ namespace WindowsFormsApp1
                 Thread.CurrentThread.IsBackground = true;
                 client = new TcpClient(addressip, 11000);
                 recieveFile = true;
+                Invoke(new Action(() =>
+                {
+                    label4.Text = "Nawiązano połączenie z klientem";
+                    label4.ForeColor = Color.Green;
+                }));
             }).Start();
 
-            label4.Text = "Nawiązano połączenie z klientem";
-            label4.ForeColor = Color.Green;
 
             //stworzenie klucza programu na wypadek gdyby taki jeszcze nie istniał
             Registry.CurrentUser.CreateSubKey(SOFTWARE_KEY).CreateSubKey(NAME_KEY);
 
-            if (label4.Text == "Brak wykrytego serwera")
-            {
-                MessageBox.Show("Nie wykryto połączenia z serwerem!", "Błąd połączenia!", MessageBoxButtons.OK);
-                return;
-            }
             
             //zahashowanie nazwy używkownika
             string encrytpedUserName = Encoding.Default.GetString(SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(loginTextBox.Text)));
@@ -124,10 +122,7 @@ namespace WindowsFormsApp1
             string cipherMode = "";
 
             //===================================================================================================================== KONIEC ODBIORU PLIKU ===============
-            while(ns == null) { }
-            ns = client.GetStream();
-            ns.Write(exponent, 0, exponent.Length);
-            ns.Write(modulus, 0, modulus.Length);
+
             while (!ns.DataAvailable) { }
             string tempFile = Path.GetTempFileName();
 
