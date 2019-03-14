@@ -24,7 +24,9 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "127.0.0.1";
+        private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
         private NetworkStream ns;
@@ -50,8 +52,8 @@ namespace WindowsFormsApp1
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                client = new TcpClient("127.0.0.1", 11000);
-                ns = client.GetStream();
+                client = new TcpClient(addressip, 11000);
+                recieveFile = true;
             }).Start();
 
             label4.Text = "Nawiązano połączenie z klientem";
@@ -83,6 +85,7 @@ namespace WindowsFormsApp1
             Console.WriteLine("expodent :{0} \n", Encoding.Default.GetString(exponent));
             Console.WriteLine("modulus : {0} \n", Encoding.Default.GetString(modulus));
 
+            while (!recieveFile) { }
             try
             {
                 ns = client.GetStream();

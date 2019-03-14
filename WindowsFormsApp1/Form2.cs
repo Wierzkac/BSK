@@ -20,13 +20,15 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "127.0.0.1";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
         private byte[] encryptedSessionKey = null;
         private byte[] exponent = new byte[3];
         private byte[] modulus = new byte[128];
+        private bool przesylDone = false;
 
         private Form1 mainForm = null;
         public Form2()
@@ -43,7 +45,7 @@ namespace WindowsFormsApp1
             {
                 Thread.CurrentThread.IsBackground = true;
 
-                listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 11000);
+                listener = new TcpListener(IPAddress.Parse(addressip), 11000);
                 listener.Start();
 
                 while (true)
@@ -61,6 +63,7 @@ namespace WindowsFormsApp1
                     while (!ns.DataAvailable) { }
                     ns.Read(exponent, 0, 3);
                     ns.Read(modulus, 0, 128);
+                    przesylDone = true;
                     Console.WriteLine("expodent :{0}", Encoding.Default.GetString(exponent));
                     Console.WriteLine("modulus : {0}", Encoding.Default.GetString(modulus));
                 }
@@ -114,6 +117,7 @@ namespace WindowsFormsApp1
                     MessageBox.Show("Błąd wyboru trybu szyfrowania!\n Wybierz tryb jeszcze raz", "Błąd trybu szyfrowania!", MessageBoxButtons.OK);
                     return;
             }
+            while (!przesylDone) { } // OCZEKIWANIE NA KLUCZ OD KLIENTA
 
             //zaznaczenie progresu szyfrowania
             this.Invoke(new Action(() =>
@@ -122,18 +126,15 @@ namespace WindowsFormsApp1
             }
             ));
 
-            Thread.Sleep(4000);
-
-            /* ************************************************************************************************************************************************************************
+             /* ************************************************************************************************************************************************************************
              *                                                                                                                                 TU PROPONUJĘ ODBIÓR
              * *************************************************************************************************************************************************************************
              */
 
             // dane pobrane od usera
+
             
-           encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
-
-
+            encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
             try
             {
                 ns = client.GetStream();
@@ -148,10 +149,6 @@ namespace WindowsFormsApp1
             {
                 Console.WriteLine(error.ToString());
             }
-            //Invoke(new Action(() =>
-            //{
-            //    trySendFile();
-            //}));
             /* *************************************************************************************************************************************************************************
              * Pod encrypted jest zaszyfrowana wiadomość
              * Klucz sesyjny pod encryptedSessionKey                                                                                            TU PROPONUJĘ WYSYŁANIE
@@ -159,23 +156,6 @@ namespace WindowsFormsApp1
              * *************************************************************************************************************************************************************************
              */
 
-        }
-        private void trySendFile()
-        {
-            try
-            {
-                ns = client.GetStream();
-                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
-                ns.Write(enc.IV, 0, enc.IV.Length);
-                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
-                ns.Write(encrypted, 0, encrypted.Length);
-                ns.Close();
-                client.Close();
-            }
-            catch (Exception error)
-            {
-                Console.WriteLine(error.ToString());
-            }
         }
 
         private void progressBarsDefaultSettings()
