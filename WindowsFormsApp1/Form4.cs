@@ -110,7 +110,7 @@ namespace WindowsFormsApp1
                 * */
 
             //tu trzeba wrzucić zaszyfrowany klucz odebrany z serwera
-            byte[] receivedSessionKey = new byte[32];
+            byte[] receivedSessionKey = new byte[128];
 
             //tu trzeba wrzucić zaszyfrowaną wiadomość
             byte[] receivedMessage = null;
@@ -131,21 +131,34 @@ namespace WindowsFormsApp1
             while (!ns.DataAvailable) { }
             string tempFile = Path.GetTempFileName();
 
-
+         
+            byte[] tmp = null;
+            long fileSize;
+            String fileName;
             byte[] tmpString = new byte[3];
-            ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);
-            ns.Read(receivedIV, 0, receivedIV.Length);
-            ns.Read(tmpString, 0, tmpString.Length);
+
+            ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);              // Klucz sesyjny
+
+            ns.Read(tmp, 0, sizeof(long));                                          // Wielkosc pliku
+            fileSize = BitConverter.ToInt64(tmp, 0);
+            
+            tmp = new byte[60];
+            ns.Read(tmp, 0, 60);                                                    // Nazwa pliku
+            fileName = Encoding.ASCII.GetString(tmp);
+
+            ns.Read(receivedIV, 0, receivedIV.Length);                              // IV
+            ns.Read(tmpString, 0, tmpString.Length);                                // Nazwa trybu szyfrowania
             cipherMode = Encoding.ASCII.GetString(tmpString);
 
-            byte[] tmp = new byte[1024];
+            tmp = new byte[1024];
             while (ns.DataAvailable)
             {
 
-                ns.Read(tmp, 0, tmp.Length);
+                ns.Read(tmp, 0, tmp.Length);                                        // Plik
                 AppendToFile(tempFile, tmp.ToArray());
             }
-
+           
+            ns.Write(Encoding.ASCII.GetBytes("Udalo sie!"), 0, 10);                // Wyslij SYGNAL OD KLIENTA
             ns.Close();
             client.Close();
 

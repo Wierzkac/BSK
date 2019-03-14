@@ -20,8 +20,8 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "127.0.0.1";
+        private const string addressip = "192.168.43.94";
+        //private const string addressip = "127.0.0.1";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
@@ -126,24 +126,30 @@ namespace WindowsFormsApp1
             }
             ));
 
-             /* ************************************************************************************************************************************************************************
-             *                                                                                                                                 TU PROPONUJĘ ODBIÓR
-             * *************************************************************************************************************************************************************************
-             */
+            /* ************************************************************************************************************************************************************************
+            *                                                                                                                                 TU PROPONUJĘ ODBIÓR
+            * *************************************************************************************************************************************************************************
+            */
 
             // dane pobrane od usera
-
-            
+            byte[] fileSize = BitConverter.GetBytes((mainForm.openfileDialog1.FileName).Length);
             encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
             try
             {
                 ns = client.GetStream();
-                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);
-                ns.Write(enc.IV, 0, enc.IV.Length);
-                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);
-                ns.Write(encrypted, 0, encrypted.Length);
-                ns.Close();
-                client.Close();
+                ns.Write(encryptedSessionKey, 0, encryptedSessionKey.Length);                                                   // Klucz sesyjny
+                ns.Write(fileSize, 0, fileSize.Length);                                                                         // Wielkosc pliku
+                ns.Write(Encoding.ASCII.GetBytes(fileNameLabel.Text), 0, 60);   // Nazwa pliku
+                ns.Write(enc.IV, 0, enc.IV.Length);                                                                             // IV
+                ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);                 // Nazwa trybu szyfrowania
+                ns.Write(encrypted, 0, encrypted.Length);                                                                       // Plik
+
+                byte[] tmpString = new byte[10];
+                string sygnal;
+                ns.Read(tmpString, 0, tmpString.Length);
+                sygnal = Encoding.ASCII.GetString(tmpString);
+                if (sygnal == "Udalo sie!")
+                    ns.Close();
             }
             catch (Exception error)
             {
