@@ -137,7 +137,7 @@ namespace WindowsFormsApp1
 
             ns.Read(tmp, 0, tmp.Length);                                          // Wielkosc pliku
             fileSize = BitConverter.ToInt64(tmp, 0);
-            Console.WriteLine("Po odebraniu wielkosci pliku");
+            Console.WriteLine("Po odebraniu wielkosci pliku: {0}", fileSize);
 
             tmp = new byte[4];
             ns.Read(tmp, 0, 4);                                                   // Wielkosc nazwy
@@ -157,13 +157,16 @@ namespace WindowsFormsApp1
             Console.WriteLine("Przed odebraniem pliku");
             tmp = new byte[1024];
             Thread.Sleep(4000);
-            while (ns.DataAvailable)
+            //while (ns.DataAvailable)
+            FileInfo tempFileInfo;
+            do
             {
-
+                tempFileInfo = new FileInfo(tempFile);
+                Console.WriteLine("Length: {0}", tempFileInfo.Length);
                 Console.WriteLine("W trakcie odbierania pliku");
                 ns.Read(tmp, 0, tmp.Length);                                        // Plik
                 AppendToFile(tempFile, tmp.ToArray());
-            }
+            } while (tempFileInfo.Length <= fileSize);
             Console.WriteLine("Po odebraniu pliku");
 
             ns.Close();
