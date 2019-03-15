@@ -169,6 +169,9 @@ namespace WindowsFormsApp1
                 }
                 Console.WriteLine("Po wysylaniu pliku");
 
+
+
+
                 ns.Close();
                 client.Close();
             }
