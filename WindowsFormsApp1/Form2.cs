@@ -21,8 +21,8 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "127.0.0.1";
+        private const string addressip = "192.168.43.94";
+        //  private const string addressip = "127.0.0.1";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
@@ -155,9 +155,11 @@ namespace WindowsFormsApp1
                 ns.Write(enc.IV, 0, enc.IV.Length);                                                                 // IV
                 ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);     // Nazwa trybu szyfrowania
                 ns.Write(encrypted, 0, encrypted.Length);                                                           // Plik
-                
+
+                Console.WriteLine("Przed rozpoczeciu wysylania pliku");
                 while (ns.DataAvailable)
                 {
+                    Console.WriteLine("W trakcie wysylania pliku");
                     //Invoke(new Action(() =>
                     //{
                     //    int temp = (int)s1 / 1024 - (int)ns.Length;
@@ -165,6 +167,7 @@ namespace WindowsFormsApp1
                     //}
                     //));
                 }
+                Console.WriteLine("Po wysylaniu pliku");
 
                 ns.Close();
                 client.Close();

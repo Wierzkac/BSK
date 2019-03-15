@@ -24,8 +24,8 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "127.0.0.1";
+        private const string addressip = "192.168.43.94";
+        //private const string addressip = "127.0.0.1";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -133,21 +133,26 @@ namespace WindowsFormsApp1
             byte[] tmpString = new byte[3];
 
             ns.Read(receivedSessionKey, 0, receivedSessionKey.Length);              // Klucz sesyjny
+            Console.WriteLine("Po odebraniu klucza");
 
             ns.Read(tmp, 0, tmp.Length);                                          // Wielkosc pliku
             fileSize = BitConverter.ToInt64(tmp, 0);
+            Console.WriteLine("Po odebraniu wielkosci pliku");
 
             tmp = new byte[4];
             ns.Read(tmp, 0, 4);                                                   // Wielkosc nazwy
             int fileNameSize = BitConverter.ToInt32(tmp, 0);
+            Console.WriteLine("Po odebraniu wielkosci nazwy");
 
             tmp = new byte[fileNameSize];
             ns.Read(tmp, 0, tmp.Length);                                                    // Nazwa pliku
             fileName = Encoding.ASCII.GetString(tmp);
+            Console.WriteLine("Po odebraniu nazwy pliku: {0}", fileName);
 
             ns.Read(receivedIV, 0, receivedIV.Length);                              // IV
             ns.Read(tmpString, 0, tmpString.Length);                                // Nazwa trybu szyfrowania
             cipherMode = Encoding.ASCII.GetString(tmpString);
+            Console.WriteLine("Po odebraniu iv i trybu");
 
             Console.WriteLine("Przed odebraniem pliku");
             tmp = new byte[1024];
@@ -155,6 +160,7 @@ namespace WindowsFormsApp1
             while (ns.DataAvailable)
             {
 
+                Console.WriteLine("W trakcie odbierania pliku");
                 ns.Read(tmp, 0, tmp.Length);                                        // Plik
                 AppendToFile(tempFile, tmp.ToArray());
             }
