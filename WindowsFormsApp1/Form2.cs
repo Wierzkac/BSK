@@ -21,8 +21,8 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        private const string addressip = "192.168.43.94";
-        //  private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "192.168.1.105";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
@@ -31,6 +31,7 @@ namespace WindowsFormsApp1
         private byte[] modulus = new byte[128];
         private bool przesylDone = false;
         private Thread listening;
+        private static ManualResetEvent allDone = new ManualResetEvent(false);
 
         private Form1 mainForm = null;
         public Form2()
@@ -140,8 +141,7 @@ namespace WindowsFormsApp1
             Invoke(new Action(() =>
             {
                 encodingProgressBar.Maximum = (int)s1;
-            }
-            ));
+            }));
             byte[] fileSize = BitConverter.GetBytes(s1);
             encryptedSessionKey = EncryptRSA(exponent, modulus, enc.Key);
             byte[] fileName = Encoding.ASCII.GetBytes(fileNameLabel.Text);
@@ -154,26 +154,36 @@ namespace WindowsFormsApp1
                 ns.Write(fileName, 0, fileName.Length);                                                             // Nazwa pliku
                 ns.Write(enc.IV, 0, enc.IV.Length);                                                                 // IV
                 ns.Write(Encoding.ASCII.GetBytes(choosenMode), 0, Encoding.ASCII.GetBytes(choosenMode).Length);     // Nazwa trybu szyfrowania
-                ns.Write(encrypted, 0, encrypted.Length);                                                           // Plik
-
-                Console.WriteLine("Przed rozpoczeciu wysylania pliku");
-                while (ns.DataAvailable)
+                Console.WriteLine("Przed rozpoczeciem wysylania pliku");
+                
+                Invoke(new Action(() =>
                 {
-                    Console.WriteLine("W trakcie wysylania pliku");
-                    //Invoke(new Action(() =>
-                    //{
-                    //    int temp = (int)s1 / 1024 - (int)ns.Length;
-                    //    encodingProgressBar.Value = temp;
-                    //}
-                    //));
+                    SendingProgressBar.Maximum = encrypted.Length;
+                    SendingProgressBar.Minimum = 0;
+                    SendingProgressBar.Value = 0;
+                    SendingProgressBar.Step = 1024;
+                }));
+
+                byte[] SendingBuffer = new byte[1024];
+                for (int i = 0; i < encrypted.Length / 1024; i++)
+                {
+                    while (!ns.CanWrite) { }
+                    Array.Copy(encrypted, 1024 * i, SendingBuffer, 0, 1024);
+                    ns.Write(SendingBuffer, 0, SendingBuffer.Length);
+                    Invoke(new Action(() =>
+                    {
+                        SendingProgressBar.PerformStep();
+                    }));
+                    Console.WriteLine("Przesłano {0}/{1}% pliku", i*1024, encrypted.Length);
                 }
                 Console.WriteLine("Po wysylaniu pliku");
 
 
 
-
                 ns.Close();
                 client.Close();
+                MessageBox.Show("Udało się wysłać plik!", "Udane wysłanie", MessageBoxButtons.OK);
+                Application.Exit();
             }
             catch (Exception error)
             {
@@ -185,6 +195,11 @@ namespace WindowsFormsApp1
              * Wektor inicjujący pod encryptedIV
              * *************************************************************************************************************************************************************************
              */
+
+        }
+
+        private void KoniecPrzesyłaniaPliku(IAsyncResult ar)
+        {
 
         }
 

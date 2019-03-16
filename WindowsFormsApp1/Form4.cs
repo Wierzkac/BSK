@@ -24,8 +24,8 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        private const string addressip = "192.168.43.94";
-        //private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        private const string addressip = "192.168.1.105";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -49,6 +49,7 @@ namespace WindowsFormsApp1
         }
         private void saveButton_Click(object sender, EventArgs e)
         {
+            Progress_odbierania_pliku progressOdbieraniaPliku = new Progress_odbierania_pliku();
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
@@ -59,6 +60,7 @@ namespace WindowsFormsApp1
                     label4.Text = "Nawiązano połączenie z klientem";
                     label4.ForeColor = Color.Green;
                 }));
+                progressOdbieraniaPliku.ShowDialog();
             }).Start();
 
 
@@ -154,19 +156,29 @@ namespace WindowsFormsApp1
             cipherMode = Encoding.ASCII.GetString(tmpString);
             Console.WriteLine("Po odebraniu iv i trybu");
 
-            Console.WriteLine("Przed odebraniem pliku");
-            tmp = new byte[1024];
             Thread.Sleep(4000);
-            //while (ns.DataAvailable)
-            FileInfo tempFileInfo;
-            do
+
+            Invoke(new Action(() =>
             {
-                tempFileInfo = new FileInfo(tempFile);
-                Console.WriteLine("Length: {0}", tempFileInfo.Length);
-                Console.WriteLine("W trakcie odbierania pliku");
-                ns.Read(tmp, 0, tmp.Length);                                        // Plik
+                progressOdbieraniaPliku.ProgressOdbioruPliku.Maximum = (int)fileSize;
+                progressOdbieraniaPliku.ProgressOdbioruPliku.Minimum = 0;
+                progressOdbieraniaPliku.ProgressOdbioruPliku.Value = 0;
+                progressOdbieraniaPliku.ProgressOdbioruPliku.Step = 1024;
+            }));
+
+            FileInfo fileInfo = new FileInfo(tempFile);
+            tmp = new byte[1024];
+            while (fileInfo.Length != fileSize)
+            {
+                fileInfo = new FileInfo(tempFile);
+                ns.Read(tmp, 0, tmp.Length);                                          // Plik
                 AppendToFile(tempFile, tmp.ToArray());
-            } while (tempFileInfo.Length <= fileSize);
+                Invoke(new Action(() =>
+                {
+                    progressOdbieraniaPliku.ProgressOdbioruPliku.PerformStep();
+                }));
+            }
+            progressOdbieraniaPliku.Close();
             Console.WriteLine("Po odebraniu pliku");
 
             ns.Close();
@@ -196,7 +208,8 @@ namespace WindowsFormsApp1
 
             //zapis do pliku
             ByteArrayToFile(message, fileName);
-
+            MessageBox.Show("Udało się odebrać plik!", "Odebranie sie udało", MessageBoxButtons.OK);
+            Application.Exit();
         }
 
         private byte[] DecryptPrivateData(byte[] hashedPassword, byte[] encryptedPrivateData)

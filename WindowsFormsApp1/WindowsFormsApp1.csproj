@@ -81,6 +81,12 @@
       <DependentUpon>Form4.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressOdbieraniaPliku.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressOdbieraniaPliku.Designer.cs">
+      <DependentUpon>ProgressOdbieraniaPliku.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AddUserForm.resx">
       <DependentUpon>AddUserForm.cs</DependentUpon>
@@ -96,6 +102,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form4.resx">
       <DependentUpon>Form4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressOdbieraniaPliku.resx">
+      <DependentUpon>ProgressOdbieraniaPliku.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
