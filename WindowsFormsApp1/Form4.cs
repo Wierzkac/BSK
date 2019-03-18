@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        private const string addressip = "192.168.43.94";
+        private const string addressip = "192.168.43.215";
         //private const string addressip = "192.168.1.105";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
@@ -168,10 +168,10 @@ namespace WindowsFormsApp1
 
             FileInfo fileInfo = new FileInfo(tempFile);
             tmp = new byte[1024];
-            while (fileInfo.Length != fileSize)
+            while (fileInfo.Length <= fileSize)
             {
                 fileInfo = new FileInfo(tempFile);
-                ns.Read(tmp, 0, tmp.Length);                                          // Plik
+                ns.Read(tmp, 0, Math.Min((int)(fileSize - fileInfo.Length), 1024));                                          // Plik
                 AppendToFile(tempFile, tmp.ToArray());
                 Invoke(new Action(() =>
                 {

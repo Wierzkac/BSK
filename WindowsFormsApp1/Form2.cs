@@ -21,8 +21,8 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "192.168.1.105";
+        private const string addressip = "192.168.43.94";
+        //private const string addressip = "192.168.1.105";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
         private string choosenMode = null;
@@ -136,8 +136,7 @@ namespace WindowsFormsApp1
             */
 
             // dane pobrane od usera
-            FileInfo f = new FileInfo(mainForm.openfileDialog1.FileName);
-            long s1 = f.Length;
+            long s1 = encrypted.Length;
             Invoke(new Action(() =>
             {
                 encodingProgressBar.Maximum = (int)s1;
@@ -165,17 +164,21 @@ namespace WindowsFormsApp1
                 }));
 
                 byte[] SendingBuffer = new byte[1024];
-                for (int i = 0; i < encrypted.Length / 1024; i++)
+                int i = 0;
+                while(encrypted.Length - 1024*i > 0)
                 {
                     while (!ns.CanWrite) { }
-                    Array.Copy(encrypted, 1024 * i, SendingBuffer, 0, 1024);
+                    SendingBuffer = new byte[1024];
+                    Array.Copy(encrypted, 1024 * i, SendingBuffer, 0, Math.Min(encrypted.Length - 1024* i, 1024) );
                     ns.Write(SendingBuffer, 0, SendingBuffer.Length);
                     Invoke(new Action(() =>
                     {
                         SendingProgressBar.PerformStep();
                     }));
-                    Console.WriteLine("Przesłano {0}/{1}% pliku", i*1024, encrypted.Length);
+                    Console.WriteLine("Przesłano {0}/{1} pliku", (i+1)*1024, encrypted.Length);
+                    i++;
                 }
+
                 Console.WriteLine("Po wysylaniu pliku");
 
 
