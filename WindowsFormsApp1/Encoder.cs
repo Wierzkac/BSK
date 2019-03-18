@@ -96,7 +96,7 @@ namespace WindowsFormsApp1
                 KeySize = this.KeySize,
                 Key = this.Key,
                 IV = this.IV,
-                Padding = PaddingMode.Zeros,
+                Padding = PaddingMode.Zeros, 
                 Mode = CipherMode.CFB
             };
 
