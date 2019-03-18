@@ -24,8 +24,8 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        //private const string addressip = "192.168.43.94";
-        private const string addressip = "192.168.1.105";
+        private const string addressip = "192.168.43.94";
+        //private const string addressip = "192.168.1.105";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -178,7 +178,12 @@ namespace WindowsFormsApp1
                     progressOdbieraniaPliku.ProgressOdbioruPliku.PerformStep();
                 }));
             }
-            progressOdbieraniaPliku.Close();
+
+            Invoke(new Action(() =>
+            {
+                progressOdbieraniaPliku.Close();
+            }));
+            
             Console.WriteLine("Po odebraniu pliku");
 
             ns.Close();
