@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        private const string addressip = "192.168.43.215";
+        private const string addressip = "192.168.43.94";
         //private const string addressip = "192.168.1.105";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
@@ -156,7 +156,7 @@ namespace WindowsFormsApp1
             cipherMode = Encoding.ASCII.GetString(tmpString);
             Console.WriteLine("Po odebraniu iv i trybu");
 
-            Thread.Sleep(4000);
+            Thread.Sleep(1000);
 
             Invoke(new Action(() =>
             {
@@ -167,10 +167,15 @@ namespace WindowsFormsApp1
             }));
 
             FileInfo fileInfo = new FileInfo(tempFile);
-            tmp = new byte[1024];
-            while (fileInfo.Length <= fileSize)
+            
+            while (fileInfo.Length < fileSize)
             {
                 fileInfo = new FileInfo(tempFile);
+                tmp = new byte[Math.Min((int)(fileSize - fileInfo.Length), 1024)];
+
+                while (!ns.CanRead) {
+                    Console.WriteLine(fileInfo.Length);
+                }
                 ns.Read(tmp, 0, Math.Min((int)(fileSize - fileInfo.Length), 1024));                                          // Plik
                 AppendToFile(tempFile, tmp.ToArray());
                 Invoke(new Action(() =>
@@ -191,6 +196,21 @@ namespace WindowsFormsApp1
 
             receivedMessage = FileToByteArray(tempFile);
 
+
+
+            //int a = 0;
+            //byte k = 0;
+
+            //while (receivedMessage.Length - a > 0)
+            //{
+            //    if (receivedMessage[a] == 0)
+            //        Console.WriteLine("Error {0}", a);
+            //    k++;
+            //    a++;
+            //}
+
+
+
             /*
             *      SCENARIUSZ INTERAKCJI
             *  0. Pobranie całej wiadomości
@@ -200,7 +220,7 @@ namespace WindowsFormsApp1
             *  4. Odszyfrowanie wiadomosci
             *  5. Zapis 
             */
-            
+
             #region Deszyfrowanie_wiadomości
 
             //odszyfrowanie kluczas sesyjnego algorytmem RSA
