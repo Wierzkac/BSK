@@ -136,7 +136,7 @@ namespace WindowsFormsApp1
             */
 
             // dane pobrane od usera
-            long s1 = encrypted.Length;
+            long s1 =  encrypted.Length;
             Invoke(new Action(() =>
             {
                 encodingProgressBar.Maximum = (int)s1;
@@ -162,12 +162,18 @@ namespace WindowsFormsApp1
                     SendingProgressBar.Value = 0;
                     SendingProgressBar.Step = 1024;
                 }));
+                //byte[] proba = new byte[1000000];
+                //int j = 0;
+                //byte k = 0;
+                //while (proba.Length - j > 0)
+                //    proba[j++] = k++;
+                //encrypted = proba;
 
                 byte[] SendingBuffer = new byte[1024];
                 int i = 0;
                 while(encrypted.Length - 1024*i > 0)
                 {
-                    while (!ns.CanWrite) { }
+                    while (!ns.CanWrite) { Console.WriteLine("Czekam na lini {0}", i); }
                     SendingBuffer = new byte[1024];
                     Array.Copy(encrypted, 1024 * i, SendingBuffer, 0, Math.Min(encrypted.Length - 1024* i, 1024) );
                     ns.Write(SendingBuffer, 0, SendingBuffer.Length);
@@ -175,7 +181,7 @@ namespace WindowsFormsApp1
                     {
                         SendingProgressBar.PerformStep();
                     }));
-                    Console.WriteLine("Przesłano {0}/{1} pliku", (i+1)*1024, encrypted.Length);
+                    //Console.WriteLine("Przesłano {0}/{1} pliku", (i+1)*1024, encrypted.Length);
                     i++;
                 }
 
