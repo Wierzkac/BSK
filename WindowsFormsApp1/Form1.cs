@@ -45,17 +45,17 @@ namespace WindowsFormsApp1
             {
                 FileInfo fi = new FileInfo(openFileDialog1.FileName);
                 long fileSize = fi.Length;
-                if (fileSize > 104857600 || fileSize < 1024) {
-                    MessageBox.Show("Twój plik jest albo poniżej 1kB albo powyżej 100MB!\n Wybierz ponownie plik.",
-                    "ERROR",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                }
-                else {
+                //if (fileSize > 104857600 || fileSize < 1024) {
+                //    MessageBox.Show("Twój plik jest albo poniżej 1kB albo powyżej 100MB!\n Wybierz ponownie plik.",
+                //    "ERROR",
+                //    MessageBoxButtons.OK,
+                //    MessageBoxIcon.Warning);
+                //}
+                //else {
                     var filePath = openFileDialog1.FileName;
                     fileData = FileToByteArray(openFileDialog1.FileName);
                     textBox1.Text = openFileDialog1.SafeFileName;
-                }
+                //}
             }
         }
 

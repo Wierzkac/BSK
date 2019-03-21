@@ -21,7 +21,9 @@ namespace WindowsFormsApp1
         private NetworkStream ns;
         private TcpClient client;
         private TcpListener listener;
-        private const string addressip = "192.168.43.94";
+        private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        //private const string addressip = "169.254.238.147";
         //private const string addressip = "192.168.1.105";
         private Encoder enc = new Encoder();
         private byte[] encrypted = null;
@@ -94,8 +96,7 @@ namespace WindowsFormsApp1
                 choosenMode = mainForm.ChoosenEncodingMode().ToString();
             }));
 
-
-            switch(choosenMode)
+            switch (choosenMode)
             {
                 case "ECB":
                     encrypted = enc.EncryptByECB(mainForm.fileData);
@@ -122,6 +123,7 @@ namespace WindowsFormsApp1
                     return;
             }
             while (!przesylDone) { } // OCZEKIWANIE NA KLUCZ OD KLIENTA
+
 
             //zaznaczenie progresu szyfrowania
             this.Invoke(new Action(() =>
@@ -168,6 +170,7 @@ namespace WindowsFormsApp1
                 //while (proba.Length - j > 0)
                 //    proba[j++] = k++;
                 //encrypted = proba;
+                var watchSend = System.Diagnostics.Stopwatch.StartNew();
 
                 byte[] SendingBuffer = new byte[1024];
                 int i = 0;
@@ -184,6 +187,10 @@ namespace WindowsFormsApp1
                     //Console.WriteLine("Przesłano {0}/{1} pliku", (i+1)*1024, encrypted.Length);
                     i++;
                 }
+
+                watchSend.Stop();
+                var elapsedMsSend = watchSend.ElapsedMilliseconds;
+                Console.WriteLine("Wysłanie pliku zajeło: {0}", elapsedMsSend);
 
                 Console.WriteLine("Po wysylaniu pliku");
 

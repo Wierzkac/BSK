@@ -62,9 +62,14 @@ namespace WindowsFormsApp1
                 Mode = CipherMode.ECB
             };
 
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             ICryptoTransform encryptor = aes.CreateEncryptor();
             byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
             encryptor.Dispose();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Zaszyfrowanie pliku zajeło: {0}", elapsedMs);
 
             return encrypted;
         }
@@ -81,9 +86,13 @@ namespace WindowsFormsApp1
                 Mode = CipherMode.CBC
             };
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             ICryptoTransform encryptor = aes.CreateEncryptor();
             byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
             encryptor.Dispose();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Zaszyfrowanie pliku zajeło: {0}", elapsedMs);
 
             return encrypted;
         }
@@ -100,9 +109,13 @@ namespace WindowsFormsApp1
                 Mode = CipherMode.CFB
             };
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             ICryptoTransform encryptor = aes.CreateEncryptor();
             byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
             encryptor.Dispose();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Zaszyfrowanie pliku zajeło: {0}", elapsedMs);
 
             return encrypted;
         }
@@ -119,9 +132,13 @@ namespace WindowsFormsApp1
                 Mode = CipherMode.OFB
             };
 
+            var watch = System.Diagnostics.Stopwatch.StartNew();
             ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
             byte[] encrypted = encryptor.TransformFinalBlock(message, 0, message.Length);
             encryptor.Dispose();
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Zaszyfrowanie pliku zajeło: {0}", elapsedMs);
 
             return encrypted;
         }

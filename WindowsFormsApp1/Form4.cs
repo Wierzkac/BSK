@@ -24,8 +24,9 @@ namespace WindowsFormsApp1
         private const string SOFTWARE_KEY = "Software";
         private const string PUBLIC_KEY = "Public";
         private const string PRIVATE_KEY = "Private";
-        private const string addressip = "192.168.43.94";
-        //private const string addressip = "192.168.1.105";
+        private const string addressip = "127.0.0.1";
+        //private const string addressip = "192.168.43.94";
+        //private const string addressip = "192.168.43.215";
         private bool recieveFile = false;
         private byte[] _receivedFile = null;
         private TcpClient client;
@@ -167,7 +168,9 @@ namespace WindowsFormsApp1
             }));
 
             FileInfo fileInfo = new FileInfo(tempFile);
-            
+
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             while (fileInfo.Length < fileSize)
             {
                 fileInfo = new FileInfo(tempFile);
@@ -183,6 +186,10 @@ namespace WindowsFormsApp1
                     progressOdbieraniaPliku.ProgressOdbioruPliku.PerformStep();
                 }));
             }
+
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Odebranie pliku zajeło: {0}", elapsedMs);
 
             Invoke(new Action(() =>
             {
